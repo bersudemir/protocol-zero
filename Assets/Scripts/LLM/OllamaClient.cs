@@ -32,18 +32,18 @@ public class LLMResponseProperties
 }
 
 [Serializable]
-public class LLMResponseSchema
+public class LLMResponseSchema //gelen json verisinin þemasýný tanýmlar
 {
-    public string type = "object"; //nesne tipinde
-    public LLMResponseProperties properties = new LLMResponseProperties(); //alanlar
-    public string[] required = { "dialogue", "action" }; //zorunlu alanlar
-    public bool additionalProperties = false; //ekstra alanlara izin verilmez
+    public string type = "object";
+    public LLMResponseProperties properties = new LLMResponseProperties();
+    public string[] required = { "dialogue", "action" };//alanlarýn zorunlu olduðunu belirtir
+    public bool additionalProperties = false; //ekstra alanlarýn kabul edilmediðini belirtir
 }
 
 [Serializable]
-public class OllamaOptions//modelin davranýþýný kontrol etmek için ayarlar
+public class OllamaOptions//modelin davranýþýný kontrol etmek için kullanýlan seçenekler
 {
-    public float temperature = 0f; //rastgelelik seviyesi
+    public float temperature = 0f;//düþükse tutaarlý yüksekse rastgele cevaplar verir
 }
 
 [Serializable]
@@ -51,7 +51,7 @@ public class OllamaChatRequest
 {
     public string model;
     public OllamaMessage[] messages;
-    public bool stream;
+    public bool stream; //cevaplarý tekte almak için false
     public LLMResponseSchema format;
     public OllamaOptions options;
 }
@@ -62,7 +62,7 @@ public class OllamaChatResponse
     public OllamaMessage message;
 }
 
-public class OllamaClient : MonoBehaviour
+public class OllamaClient : MonoBehaviour, ILLMClient
 {
     [SerializeField]
     private string endpoint = "http://localhost:11434/api/chat";
@@ -70,98 +70,72 @@ public class OllamaClient : MonoBehaviour
     [SerializeField]
     private string model = "qwen2.5:1.5b";
 
-    public IEnumerator SendChatRequest( 
+    public IEnumerator SendChatRequest( //coroutine ile asenkron olarak çalýþýr bu yüzden IEnumerator döndürür
+        string systemPrompt, //modele kim olduðunu ve kurallarý verir
         string userMessage,
-        Action<LLMResponse> onSuccess,
+        Action<string> onSuccess,
         Action<string> onError)
     {
-        OllamaChatRequest requestData = new OllamaChatRequest{
+        OllamaChatRequest requestData = new OllamaChatRequest//ollama api'sine gönderilecek veriyi oluþturur
+        {
             model = model,
 
             messages = new[]
-    {
-        new OllamaMessage
-        {
-            role = "system",
-            content =
-                "Sadece JSON formatýnda cevap ver. " +
-                "Cevap tam olarak dialogue ve action alanlarýný içersin. " +
-                "action þimdilik her zaman NONE olsun."
-        },
+            {
+                new OllamaMessage
+                {
+                    role = "system",
+                    content = systemPrompt
+                },
 
-        new OllamaMessage
-        {
-            role = "user",
-            content = userMessage
-        }
-    },
+                new OllamaMessage
+                {
+                    role = "user",
+                    content = userMessage
+                }
+            },
 
             stream = false,
             format = new LLMResponseSchema(),
             options = new OllamaOptions()
-
         };
 
         string json = JsonUtility.ToJson(requestData);
 
         using UnityWebRequest request =
-            new UnityWebRequest(endpoint, UnityWebRequest.kHttpVerbPOST); //http isteði POST oluþturuldu
+            new UnityWebRequest(endpoint, UnityWebRequest.kHttpVerbPOST);//http post isteði oluþturur
 
         request.uploadHandler =
-            new UploadHandlerRaw(Encoding.UTF8.GetBytes(json)); //json verisi yükleme için ayarlandý
+            new UploadHandlerRaw(Encoding.UTF8.GetBytes(json));
 
         request.downloadHandler =
-            new DownloadHandlerBuffer(); //ollama'dan gelen yanýtý almak için 
+            new DownloadHandlerBuffer();//gelen cevabý tutar
 
-        request.SetRequestHeader( //istek baþlýðý eklendi
+        request.SetRequestHeader(//ollamaya json veri gönderileceðini söyler
             "Content-Type",
             "application/json"
         );
 
-        yield return request.SendWebRequest(); //istek gönderildi
+        yield return request.SendWebRequest();//istek gönderilir (unity coroutine)
 
-        if (request.result != UnityWebRequest.Result.Success) //istek baþarýsýzsa hata mesajý döndürülür
+        if (request.result != UnityWebRequest.Result.Success)//http hata kontrolü
         {
-            onError?.Invoke(
-                "Ollama baðlantý hatasý: " + request.error
-            );
-
+            onError?.Invoke("Ollama baðlantý hatasý: " + request.error);
             yield break;
         }
 
-        OllamaChatResponse response =
-            JsonUtility.FromJson<OllamaChatResponse>(request.downloadHandler.text); //ollama'dan gelen yanýt json formatýna çevrildi
+        OllamaChatResponse response =JsonUtility.FromJson<OllamaChatResponse>(request.downloadHandler.text);
 
-        if (response == null ||
-            response.message == null ||
-            string.IsNullOrWhiteSpace(response.message.content))
+        if (response == null || response.message == null ||string.IsNullOrWhiteSpace(response.message.content))
         {
             onError?.Invoke("Modelden geçerli cevap alýnamadý.");
             yield break;
         }
 
-        LLMResponse llmResponse;
-        Debug.Log("RAW LLM CONTENT: " + response.message.content);
-        try
-        {
-            llmResponse = JsonUtility.FromJson<LLMResponse>( //ollama'dan gelen yanýt json formatýna çevrildi
-                response.message.content 
-            );
-        }
-        catch (Exception)
-        {
-            onError?.Invoke("Model geçersiz JSON döndürdü.");
-            yield break;
-        }
+        string rawContent = response.message.content;//modelden gelen cevabý alýr
 
-        if (llmResponse == null ||
-            string.IsNullOrWhiteSpace(llmResponse.dialogue) ||
-            string.IsNullOrWhiteSpace(llmResponse.action))
-        {
-            onError?.Invoke("Model cevabýnda gerekli alanlar eksik.");
-            yield break;
-        }
+        Debug.Log("RAW LLM CONTENT: " + rawContent);
 
-        onSuccess?.Invoke(llmResponse);
+        onSuccess?.Invoke(rawContent);//cevabý geri döndürür
     }
 }

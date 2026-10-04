@@ -7,7 +7,7 @@ public class DialogueUIController : MonoBehaviour
     [SerializeField] private TMP_Text responseText;
     [SerializeField] private OllamaClient ollamaClient;
 
-    public void OnSendClicked()
+    public void OnSendClicked()//butona týklandýðýnda çaðrýlýr
     {
         string userMessage = messageInput.text.Trim();
 
@@ -16,18 +16,28 @@ public class DialogueUIController : MonoBehaviour
             responseText.text = "Lütfen bir mesaj yaz.";
             return;
         }
+
         responseText.text = "Düþünüyor...";
 
+        string temporarySystemPrompt =
+            "Sadece JSON formatýnda cevap ver. " +
+            "Cevap tam olarak dialogue ve action alanlarýný içersin. " +
+            "action þimdilik her zaman NONE olsun.";
+
         StartCoroutine(
-            ollamaClient.SendChatRequest(userMessage,OnOllamaSuccess,OnOllamaError)
+            ollamaClient.SendChatRequest(
+                temporarySystemPrompt,
+                userMessage,
+                OnOllamaSuccess,
+                OnOllamaError
+            )
         );
     }
 
-    private void OnOllamaSuccess(LLMResponse modelResponse)
+    private void OnOllamaSuccess(string rawContent)
     {
-        responseText.text = modelResponse.dialogue;
-
-        Debug.Log("LLM Action: " + modelResponse.action);
+        responseText.text = rawContent;
+        Debug.Log("RAW LLM RESPONSE: " + rawContent);
     }
 
     private void OnOllamaError(string errorMessage)
