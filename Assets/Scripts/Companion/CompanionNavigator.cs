@@ -4,17 +4,12 @@ using UnityEngine.AI;
 
 public class CompanionNavigator : MonoBehaviour
 {
-    [SerializeField] private Transform target;
     private NavMeshAgent agent;
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
     }
-    private void Start()
-    {
-        MoveToTarget();
-    }
-    public void MoveToTarget()
+    public void MoveTo(Transform target)
     {
         if (target == null)
         {
@@ -26,6 +21,14 @@ public class CompanionNavigator : MonoBehaviour
             Debug.LogWarning("Companion NavMesh üzerinde değil");
             return;
         }
+        agent.isStopped = false;
         agent.SetDestination(target.position);
     }
+    public void Stop()
+    {
+        if (!agent.isOnNavMesh)
+            return;
+        agent.isStopped = true;
+    }
+
 }

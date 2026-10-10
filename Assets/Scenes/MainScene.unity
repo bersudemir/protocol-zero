@@ -837,6 +837,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Companion
       objectReference: {fileID: 0}
+    - target: {fileID: 1043156361886254901, guid: 38b0de2a605aa104da7aa75bb536cd9b, type: 3}
+      propertyPath: player
+      value: 
+      objectReference: {fileID: 1982066626}
     - target: {fileID: 2192752123784096903, guid: 38b0de2a605aa104da7aa75bb536cd9b, type: 3}
       propertyPath: target
       value: 

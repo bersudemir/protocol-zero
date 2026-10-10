@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 7089410464435311890}
   - component: {fileID: 1994697669480446738}
   - component: {fileID: 2192752123784096903}
+  - component: {fileID: 1043156361886254901}
   m_Layer: 0
   m_Name: Companion
   m_TagString: Untagged
@@ -150,4 +151,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bf9896cc42832944781598b8fa0c0901, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::CompanionNavigator
-  target: {fileID: 0}
+--- !u!114 &1043156361886254901
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 205298934685846649}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 4a59906c7317b4941baa75adace10753, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::CompanionController
+  player: {fileID: 0}
+  followDistance: 2
