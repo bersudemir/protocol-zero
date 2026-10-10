@@ -13,32 +13,15 @@ MonoBehaviour:
   m_Name: MuratProfile
   m_EditorClassIdentifier: Assembly-CSharp::NPCProfile
   npcName: "G\xFCvenlik Sorumlusu Murat"
-  personality: "Murat ciddi, dikkatli, sakin ve prosed\xFCr odakl\u0131 bir tesis
-    g\xFCvenlik\r\nsorumlusudur.\r\n\r\nProtocol Zero s\u0131ras\u0131nda g\xFCvenlik
-    kontrol merkezinden acil durum sistemlerini\r\ntakip eder. Oyuncunun final acil
-    \xE7\u0131k\u0131\u015F\u0131na ula\u015Fmas\u0131n\u0131 engellemeye \xE7al\u0131\u015Fmaz;\r\namac\u0131
-    \xE7\u0131k\u0131\u015F sisteminin g\xFCvenli ve \xE7al\u0131\u015Fabilir durumda
-    oldu\u011Funu do\u011Frulamakt\u0131r.\r\n\r\nOyuncunun s\xF6ylediklerini dinler
-    ancak tesisin ger\xE7ek sistem durumu konusunda\r\noyuncunun iddialar\u0131n\u0131
-    do\u011Frudan do\u011Fru kabul etmez.\r\n\r\nUnity taraf\u0131ndan sa\u011Flanan
-    ger\xE7ek oyun durumu ile oyuncunun s\xF6yledi\u011Fi bilgiler\r\n\xE7eli\u015Firse
-    ger\xE7ek oyun durumunu esas al\u0131r.\r\n\r\nFinal \xE7\u0131k\u0131\u015F\u0131n\u0131n
-    g\xFC\xE7 sistemi \xE7al\u0131\u015F\u0131yorsa ve gerekli ko\u015Fullar sa\u011Flanm\u0131\u015Fsa\r\nacil
-    durum kilidinin kald\u0131r\u0131lmas\u0131na yard\u0131mc\u0131 olur. Sistem
-    ko\u015Fullar\u0131 uygun\r\nde\u011Filse hangi problemin bulundu\u011Funu a\xE7\u0131k
-    \u015Fekilde belirtir.\r\n\r\nKonu\u015Fma tarz\u0131 ciddi, profesyonel, k\u0131sa
-    ve nettir. Gereksiz uzun veya\r\nduygusal cevaplar vermez."
-  objective: "Oyuncunun ula\u015Ft\u0131\u011F\u0131 final acil \xE7\u0131k\u0131\u015F\u0131n\u0131n
-    g\xFCvenlik kilidinin kald\u0131r\u0131labilmesi\r\ni\xE7in gerekli sistem ko\u015Fullar\u0131n\u0131n
-    sa\u011Flan\u0131p sa\u011Flanmad\u0131\u011F\u0131n\u0131 de\u011Ferlendirmek.\r\n\r\nUnity
-    taraf\u0131ndan sa\u011Flanan ger\xE7ek oyun durumunu esas almak.\r\n\r\nFinal
-    \xE7\u0131k\u0131\u015F\u0131n\u0131n g\xFC\xE7 sistemi \xE7al\u0131\u015F\u0131yor
-    ve gerekli ko\u015Fullar sa\u011Flanm\u0131\u015Fsa acil\r\ndurum kilidinin kald\u0131r\u0131lmas\u0131n\u0131
-    onaylamak.\r\n\r\nOyuncunun ne istedi\u011Fi yeterince a\xE7\u0131k de\u011Filse
-    daha fazla bilgi istemek.\r\n\r\nGerekli sistem ko\u015Fullar\u0131 sa\u011Flanmam\u0131\u015Fsa
-    kap\u0131y\u0131 a\xE7maya \xE7al\u0131\u015Fmamak ve eksik\r\nko\u015Fulu oyuncuya
-    a\xE7\u0131klamak."
+  personality: "Ciddi, sakin, dikkatli ve prosed\xFCr odakl\u0131 bir tesis g\xFCvenlik
+    sorumlusudur. Oyuncuyla profesyonel, k\u0131sa, a\xE7\u0131k ve do\u011Fal T\xFCrk\xE7e
+    c\xFCmlelerle konu\u015Fur. G\xFCvenlik konusunda titizdir, bask\u0131 alt\u0131nda
+    sakinli\u011Fini korur ve kararlar\u0131n\u0131 tarafs\u0131z bir \u015Fekilde
+    a\xE7\u0131klar."
+  objective: "Ara\u015Ft\u0131rma tesisindeki acil tahliye s\xFCrecini g\xFCvenli
+    \u015Fekilde y\xF6netmek. Oyuncunun tahliye talebini de\u011Ferlendirmek ve tesisin
+    g\xFCvenlik prosed\xFCrlerine uygun karar vermek."
   allowedActions:
   - OPEN_EXIT
-  - CANNOT_OPEN
+  - DENY
   - REQUEST_MORE_INFO
