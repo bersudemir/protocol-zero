@@ -24,7 +24,7 @@ public class PlayerInteraction : MonoBehaviour
             foreach(MonoBehaviour behaviour in behaviours)
             {
                 if(behaviour is IInteractable interactable)
-                {
+                { 
                     interactable.Interact();
                     return;
                 }
