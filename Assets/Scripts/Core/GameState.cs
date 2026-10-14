@@ -1,3 +1,4 @@
+
 using UnityEngine;
 
 public class GameState : MonoBehaviour
@@ -9,13 +10,26 @@ public class GameState : MonoBehaviour
     public bool HasKeycard => hasKeycard;
     public bool PowerRestored => powerRestored;
 
+    // Oyun durumu her deðiþtiðinde artýrýlýr.
+    public int StateVersion { get; private set; }
+
     public void SetHasKeycard(bool value)
     {
+        // Deðer aynýysa deðiþiklik yok.
+        if (hasKeycard == value)
+            return;
+
         hasKeycard = value;
+        StateVersion++;
     }
 
     public void SetPowerRestored(bool value)
     {
+        // Deðer aynýysa deðiþiklik yok.
+        if (powerRestored == value)
+            return;
+
         powerRestored = value;
+        StateVersion++;
     }
 }
