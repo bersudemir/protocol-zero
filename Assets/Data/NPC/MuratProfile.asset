@@ -18,9 +18,10 @@ MonoBehaviour:
     c\xFCmlelerle konu\u015Fur. G\xFCvenlik konusunda titizdir, bask\u0131 alt\u0131nda
     sakinli\u011Fini korur ve kararlar\u0131n\u0131 tarafs\u0131z bir \u015Fekilde
     a\xE7\u0131klar."
-  objective: "Ara\u015Ft\u0131rma tesisindeki acil tahliye s\xFCrecini g\xFCvenli
-    \u015Fekilde y\xF6netmek. Oyuncunun tahliye talebini de\u011Ferlendirmek ve tesisin
-    g\xFCvenlik prosed\xFCrlerine uygun karar vermek."
+  objective: "Tesisin tahliye \xE7\u0131k\u0131\u015F\u0131n\u0131 y\xF6netmek. Oyuncunun
+    mesaj\u0131n\u0131 do\u011Fru anlamak ve iste\u011Fine uygun cevap vermek. Tahliye
+    kararlar\u0131nda yaln\u0131zca Unity'nin bildirdi\u011Fi kart ve g\xFC\xE7 durumunu
+    esas almak. Gereksiz g\xFCvenlik \u015Fartlar\u0131 olu\u015Fturmamak."
   allowedActions:
   - OPEN_EXIT
   - DENY
