@@ -1,9 +1,11 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using TMPro;
 
 public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] private float interactionRadius = 2f;
+    [SerializeField] private TextMeshProUGUI interactionPrompt;
     private void Update()
     {
         if (Keyboard.current == null)

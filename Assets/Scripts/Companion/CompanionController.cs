@@ -1,4 +1,6 @@
+using System.Collections;
 using UnityEngine;
+using UnityEngine.XR;
 [RequireComponent(typeof(CompanionNavigator))]
 [RequireComponent(typeof(CompanionStateMachine))]
 public class CompanionController : MonoBehaviour
@@ -7,9 +9,12 @@ public class CompanionController : MonoBehaviour
     [SerializeField] private float followDistance = 2f;
     [SerializeField] private float resumeFollowDistance = 2.5f;
     [SerializeField] private float targetArrivalDistance = 0.7f;
+    [SerializeField] private float interactionDuration = 1.5f;
     private CompanionNavigator navigator;
     private CompanionStateMachine stateMachine;
     private Transform currentTarget;
+
+    private System.Action onInteractionCompleted;
     private void Awake()
     {
         navigator = GetComponent<CompanionNavigator>();
@@ -32,6 +37,11 @@ public class CompanionController : MonoBehaviour
             case CompanionState.GoingToTarget:
                 HandleGoingToTarget();
                 break;
+
+            case CompanionState.Returning:
+                HandleReturning();
+                break;
+
         }
     }
 
@@ -63,8 +73,8 @@ public class CompanionController : MonoBehaviour
     {
         if (currentTarget == null)
         {
-            stateMachine.ChangeState(CompanionState.Failed);
             navigator.Stop();
+            stateMachine.ChangeState(CompanionState.Failed);
             return;
         }
         navigator.MoveTo(currentTarget);
@@ -74,17 +84,52 @@ public class CompanionController : MonoBehaviour
         {
             navigator.Stop();
             stateMachine.ChangeState(CompanionState.Interacting);
+            StartCoroutine(CompleteInteraction());
         }
     }
+    private IEnumerator CompleteInteraction()
+    {
+        Debug.Log("Companion ile panel etkileşime başladı.");
+        yield return new WaitForSeconds(interactionDuration);
+        if (stateMachine.CurrentState != CompanionState.Interacting)
+            yield break;
 
-    public void GoToTarget(Transform target)
+        Debug.Log("Companion paneldeki etkileşim süresini tamamladı.");
+        System.Action completedAction = onInteractionCompleted;
+        onInteractionCompleted = null;
+        currentTarget = null;
+        stateMachine.ChangeState(CompanionState.Returning);
+        completedAction?.Invoke();
+    }
+    private void HandleReturning()
+    {
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        if (distanceToPlayer <= followDistance)
+        {
+            navigator.Stop();
+            Debug.Log("Companion oyuncuya geri döndü");
+            stateMachine.ChangeState(CompanionState.Waiting);
+            return;
+        }
+        navigator.MoveTo(player);
+    }
+    public void GoToTarget(Transform target, System.Action onCompleted = null)
     {
         if (target == null)
         {
+            navigator.Stop();
             stateMachine.ChangeState(CompanionState.Failed);
             return;
         }
 
+        if(stateMachine.CurrentState == CompanionState.GoingToTarget ||
+           stateMachine.CurrentState == CompanionState.Interacting ||
+           stateMachine.CurrentState == CompanionState.Returning )
+        {
+            Debug.LogWarning("Companion zaten bir görev gerçekleştiriyor.");
+            return;
+        }
+        onInteractionCompleted = onCompleted;
         currentTarget = target;
         stateMachine.ChangeState(CompanionState.GoingToTarget);
         navigator.MoveTo(currentTarget);

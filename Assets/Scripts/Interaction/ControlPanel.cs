@@ -1,9 +1,11 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class ControlPanel : MonoBehaviour, IInteractable
 {
     [SerializeField] private CompanionController companion;
     [SerializeField] private Transform companionTarget;
+    [SerializeField] private DoorController door;
     public void Interact()
     {
         if (companion == null)
@@ -16,7 +18,12 @@ public class ControlPanel : MonoBehaviour, IInteractable
             Debug.LogWarning("ControlPanel: Companion hedefi atanmadı.");
             return;
         }
-        companion.GoToTarget(companionTarget);
+        if (door == null)
+        {
+            Debug.LogWarning("ControlPanel: Kapı atanmadı.");
+            return;
+        }
+        companion.GoToTarget(companionTarget,door.OpenDoor);
         Debug.Log("ControlPanel görevi Companiona'a verildi.");
     }
 }
