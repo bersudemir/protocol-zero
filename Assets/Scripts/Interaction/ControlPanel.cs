@@ -23,7 +23,11 @@ public class ControlPanel : MonoBehaviour, IInteractable
             Debug.LogWarning("ControlPanel: Kapı atanmadı.");
             return;
         }
-        companion.GoToTarget(companionTarget,door.OpenDoor);
+        companion.GoToTarget(companionTarget, () =>
+        {
+            door.OpenDoor();
+            enabled = false;
+        });
         Debug.Log("ControlPanel görevi Companiona'a verildi.");
     }
 }
