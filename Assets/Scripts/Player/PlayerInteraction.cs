@@ -1,38 +1,71 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
+using Unity.VisualScripting;
 
 public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] private float interactionRadius = 2f;
     [SerializeField] private TextMeshProUGUI interactionPrompt;
-    private void Update()
+    private IInteractable currentInteractable;
+    private void Awake()
     {
-        if (Keyboard.current == null)
-            return;
-        if (Keyboard.current.eKey.wasPressedThisFrame)
+        if(interactionPrompt != null)
         {
-            TryInteract();
+            interactionPrompt.gameObject.SetActive(false);
         }
     }
-
-    private void TryInteract()
+    private void Update()
     {
-        Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, interactionRadius);
-        foreach (Collider nearbyCollider in nearbyColliders)
+        currentInteractable = FindClosestInteractable();
+        UpdateInteractionPrompt();
+
+        if(Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
         {
-            MonoBehaviour[] behaviours =
-                nearbyCollider.GetComponentsInParent<MonoBehaviour>();
-            foreach(MonoBehaviour behaviour in behaviours)
+            if(currentInteractable != null)
             {
-                if(behaviour is IInteractable interactable)
-                { 
-                    interactable.Interact();
-                    return;
-                }
+                currentInteractable.Interact();
             }
         }
     }
+
+    private IInteractable FindClosestInteractable()
+    {
+        Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, interactionRadius);
+        IInteractable closestInteractable = null;
+        float closestDistance = float.MaxValue;
+
+        foreach(Collider nearbyCollider in nearbyColliders)
+        {
+            MonoBehaviour[] behaviours = nearbyCollider.GetComponentsInParent<MonoBehaviour>();
+            foreach (MonoBehaviour behaviour in behaviours)
+            {
+                if(behaviour is IInteractable interactable && behaviour.isActiveAndEnabled)
+                {
+                    float distance = Vector3.Distance(transform.position, nearbyCollider.ClosestPoint(transform.position));
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestInteractable = interactable;
+                    }
+                    break;
+                }
+            }
+        }
+        return closestInteractable;
+    }
+
+    private void UpdateInteractionPrompt()
+    {
+        if (interactionPrompt == null)
+            return;
+        bool shouldShow = currentInteractable != null;
+        if(interactionPrompt.gameObject.activeSelf != shouldShow)
+        {
+            interactionPrompt.gameObject.SetActive(shouldShow);
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.DrawWireSphere(transform.position, interactionRadius);
