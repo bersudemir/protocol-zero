@@ -435,6 +435,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 50, y: -30, z: 0}
+--- !u!1 &480531877
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 480531879}
+  - component: {fileID: 480531878}
+  m_Layer: 0
+  m_Name: GameState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &480531878
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480531877}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda526f6bb3c1dc4dab5daba4d88a73b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameState
+  hasKeycard: 0
+  powerRestored: 0
+--- !u!4 &480531879
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 480531877}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 159.98433, y: -0.00005, z: -279.8156}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &511265758
 GameObject:
   m_ObjectHideFlags: 0
@@ -553,9 +599,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b3c4dd706ad5e54c89febdca914fc96, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::DialogueUIController
+  gameState: {fileID: 480531878}
+  ollamaClient: {fileID: 2128166566}
+  npcProfile: {fileID: 11400000, guid: 4620ea7e1855a1b4bbe739021f93f1cf, type: 2}
   messageInput: {fileID: 557146182}
   responseText: {fileID: 1926761452}
-  ollamaClient: {fileID: 2128166566}
 --- !u!1 &557146180
 GameObject:
   m_ObjectHideFlags: 0
@@ -1682,7 +1730,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::OllamaClient
   endpoint: http://localhost:11434/api/chat
-  model: qwen2.5:1.5b
+  model: gemma3:4b
+  timeoutSeconds: 60
 --- !u!4 &2128166567
 Transform:
   m_ObjectHideFlags: 0
@@ -1691,8 +1740,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2128166565}
   serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 159.98438, y: 0.00004, z: -279.81555}
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: 159.98438, y: 0.000040000003, z: -279.81555}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1707,3 +1756,4 @@ SceneRoots:
   - {fileID: 511265762}
   - {fileID: 1331864287}
   - {fileID: 2128166567}
+  - {fileID: 480531879}
