@@ -14,15 +14,43 @@ public class DialogueUIController : MonoBehaviour
     [SerializeField] private TMP_InputField messageInput;
     [SerializeField] private TMP_Text responseText;
 
+    [SerializeField] private GameObject dialoguePanel;
+
     private readonly PromptBuilder promptBuilder = new PromptBuilder();
-    private readonly LLMResponseValidator responseValidator =
-        new LLMResponseValidator();
+    private readonly LLMResponseValidator responseValidator =new LLMResponseValidator();
 
     private const int MaxRetries = 1;
     private bool isWaitingForResponse;
 
-    // Fiziksel kapýyý tek baþýna açmaz.
+    // Fiziksel kapýyý tek baþýna açmaz 
     public string LastValidatedAction { get; private set; }
+
+    [ContextMenu("TEST - Open Dialogue")]
+    public void OpenDialogue()
+    {
+        if (dialoguePanel == null)
+        {
+            Debug.LogWarning("DialoguePanel referansý eksik.");
+            return;
+        }
+
+        LastValidatedAction = null;
+        dialoguePanel.SetActive(true);
+    }
+
+    [ContextMenu("TEST - Close Dialogue")]
+    public void CloseDialogue()
+    {
+        // Devam eden diyalog iþlemini durdurur
+        StopAllCoroutines();
+
+        isWaitingForResponse = false;
+        LastValidatedAction = null;
+
+        if (dialoguePanel != null)
+            dialoguePanel.SetActive(false);
+    }
+
 
     public void OnSendClicked()
     {
