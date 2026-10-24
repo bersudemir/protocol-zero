@@ -10,9 +10,15 @@ public class CompanionController : MonoBehaviour
     [SerializeField] private float resumeFollowDistance = 2.5f;
     [SerializeField] private float targetArrivalDistance = 0.7f;
     [SerializeField] private float interactionDuration = 1.5f;
+    [SerializeField] private float targetTimeoutSeconds = 30f;
+    private float targetStartTime;
     private CompanionNavigator navigator;
     private CompanionStateMachine stateMachine;
     private Transform currentTarget;
+    private float noPathSince = -1f;
+    private float lastProgressDistance = float.PositiveInfinity;
+    private float lastProgressTime = 0f;
+    private float failedSince = -1f;
 
     private System.Action onInteractionCompleted;
     private void Awake()
@@ -41,6 +47,11 @@ public class CompanionController : MonoBehaviour
             case CompanionState.Returning:
                 HandleReturning();
                 break;
+
+            case CompanionState.Failed:
+                HandleFailed();
+                break;
+                
 
         }
     }
@@ -77,7 +88,88 @@ public class CompanionController : MonoBehaviour
             stateMachine.ChangeState(CompanionState.Failed);
             return;
         }
-        navigator.MoveTo(currentTarget);
+        if(Time.time - targetStartTime >= targetTimeoutSeconds)
+        {
+            Debug.LogWarning("Companion: Hedefe ulaşma süresi aşıldı.");
+            navigator.Stop();
+            currentTarget = null;
+            onInteractionCompleted = null;
+            stateMachine.ChangeState(CompanionState.Failed);
+            return;
+        }
+        if(!navigator.TryMoveTo(currentTarget,out string navigationError))
+        {
+            Debug.LogWarning(
+                "Companion navigasyon hatası: " + navigationError);
+            navigator.Stop();
+            currentTarget = null;
+            onInteractionCompleted = null;
+            stateMachine.ChangeState(CompanionState.Failed);
+            return;
+        }
+
+        if(!navigator.IsPathPending&&
+            navigator.HasPath&&
+            navigator.PathStatus != UnityEngine.AI.NavMeshPathStatus.PathComplete)
+        {
+            Debug.LogWarning("Companion geçersiz veya eksik rota: " + navigator.PathStatus);
+            navigator.Stop();
+            currentTarget = null;
+            onInteractionCompleted = null;
+            stateMachine.ChangeState(CompanionState.Failed);
+            return;
+        }
+
+        if (!navigator.IsPathPending && !navigator.HasPath)
+        {
+            if (noPathSince < 0f)
+            {
+                noPathSince = Time.time;
+            }
+            else if (Time.time - noPathSince >= 2f)
+            {
+                Debug.LogWarning("Companion: Hedefe giden NavMesh yolu bulunamadı.");
+                navigator.Stop();
+                currentTarget = null;
+                onInteractionCompleted = null;
+                noPathSince = -1f;
+                stateMachine.ChangeState(CompanionState.Failed);
+                return;
+            }
+        }
+        else
+        {
+            noPathSince = -1f;
+        }
+
+        if(!navigator.IsPathPending&&
+            navigator.HasPath&&
+            navigator.PathStatus == UnityEngine.AI.NavMeshPathStatus.PathComplete)
+        {
+            float remaining = navigator.RemainingDistance;
+            if(!float.IsInfinity(remaining)&&
+                !float.IsNaN(remaining)&&
+                remaining < lastProgressDistance - 0.15f)
+            {
+                lastProgressDistance = remaining;
+                lastProgressTime = Time.time;
+            }
+        }
+
+        if(!navigator.IsPathPending &&
+            navigator.HasPath &&
+            navigator.PathStatus == UnityEngine.AI.NavMeshPathStatus.PathComplete&&
+            Time.time-lastProgressTime>=6f&&
+            Vector3.Distance(transform.position, currentTarget.position) > targetArrivalDistance)
+        {
+            Debug.LogWarning("Companion takıldı: 6 saniyedir ilerleme yok.");
+            navigator.Stop();
+            currentTarget = null;
+            onInteractionCompleted = null;
+            stateMachine.ChangeState(CompanionState.Failed);
+            return;
+        }
+
         float distanceToTarget = Vector3.Distance(transform.position, currentTarget.position);
 
         if (distanceToTarget <= targetArrivalDistance)
@@ -113,6 +205,29 @@ public class CompanionController : MonoBehaviour
         }
         navigator.MoveTo(player);
     }
+
+    private void HandleFailed()
+    {
+        if (failedSince < 0f)
+        {
+            failedSince = Time.time;
+            currentTarget = null;
+            onInteractionCompleted = null;
+            navigator.Stop();
+            return;
+        }
+        if (Time.time - failedSince < 2f)
+        {
+            return;
+        }
+        if (!navigator.IsOnNavMesh)
+        {
+            return;
+        }
+        failedSince = -1f;
+        Debug.Log("Companion: Başarısız görevden toparlandı.");
+        stateMachine.ChangeState(CompanionState.Following);
+    }
     public void GoToTarget(Transform target, System.Action onCompleted = null)
     {
         if (target == null)
@@ -131,6 +246,10 @@ public class CompanionController : MonoBehaviour
         }
         onInteractionCompleted = onCompleted;
         currentTarget = target;
+        noPathSince = -1f;
+        lastProgressDistance = float.PositiveInfinity;
+        lastProgressTime = Time.time;
+        targetStartTime = Time.time;
         stateMachine.ChangeState(CompanionState.GoingToTarget);
         navigator.MoveTo(currentTarget);
     }

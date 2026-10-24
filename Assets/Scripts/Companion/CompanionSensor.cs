@@ -27,7 +27,7 @@ public class CompanionSensor : MonoBehaviour
         Vector3 origin = companionCollider.bounds.center;
         Vector3 forwardDirection = transform.forward;
         Vector3 leftDirection = Quaternion.Euler(0f, sideAngle, 0f) * forwardDirection;
-        Vector3 rightDirection = Quaternion.Euler(0f, sideAngle, 0f) * forwardDirection;
+        Vector3 rightDirection = Quaternion.Euler(0f, -sideAngle, 0f) * forwardDirection;
         ForwardBlocked = CastSensor(origin, forwardDirection);
         LeftBlocked = CastSensor(origin, leftDirection);
         RightBlocked = CastSensor(origin, rightDirection);
@@ -35,7 +35,7 @@ public class CompanionSensor : MonoBehaviour
 
     private bool CastSensor(Vector3 origin, Vector3 direction)
     {
-        bool hit = Physics.Raycast(origin, direction, sensorDistance);
+        bool hit = Physics.Raycast(origin, direction,out RaycastHit hitInfo, sensorDistance);
         Debug.DrawRay(origin, direction * sensorDistance, hit ? Color.red : Color.green);
         return hit;
     }
