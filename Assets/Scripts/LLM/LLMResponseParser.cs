@@ -15,7 +15,6 @@ public class LLMResponseParser
         parsedResponse = null;
         errorMessage = null;
 
-        // 1. Boþ cevap kontrolü
         if (string.IsNullOrWhiteSpace(rawContent))
         {
             errorMessage = "Model boþ cevap döndürdü.";
@@ -25,62 +24,50 @@ public class LLMResponseParser
         try
         {
             JObject json;
-
-            // 2. JSON'u ayrýþtýr.
-            // Yinelenen alan adlarýný kabul etme.
             JsonLoadSettings settings = new JsonLoadSettings
             {
-                DuplicatePropertyNameHandling =
-                    DuplicatePropertyNameHandling.Error
+                //ayný alan adý olursa hata yolluyor
+                DuplicatePropertyNameHandling =DuplicatePropertyNameHandling.Error
             };
 
-            using (StringReader stringReader =
-                new StringReader(rawContent))
-            using (JsonTextReader jsonReader =
-                new JsonTextReader(stringReader))
+            //ollamadan gelen cevabý JSON olarak ayrýþtýr
+            using (StringReader stringReader = new StringReader(rawContent))
+            using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
             {
-                jsonReader.DateParseHandling =
-                    DateParseHandling.None;
+                jsonReader.DateParseHandling =DateParseHandling.None;//tarihleri otomatik olarak ayrýþtýrma
 
-                JToken root = JToken.ReadFrom(
-                    jsonReader,
-                    settings
-                );
-
+                JToken root = JToken.ReadFrom(jsonReader,settings);
+            
                 if (!(root is JObject))
                 {
-                    errorMessage =
-                        "LLM cevabý JSON nesnesi deðil.";
+                    errorMessage ="LLM cevabý JSON nesnesi deðil.";
                     return false;
                 }
 
-                // JSON nesnesinden sonra ek içerik olamaz.
+                // JSON nesnesinden sonra ek içerik olamaz
                 if (jsonReader.Read())
                 {
-                    errorMessage =
-                        "JSON cevabýnda fazladan içerik var.";
+                    errorMessage ="JSON cevabýnda fazladan içerik var.";
                     return false;
                 }
 
                 json = (JObject)root;
             }
 
-            // 3. Yalnýzca üç alana izin ver.
+            // Yalnýzca üç alana izin verir
             foreach (JProperty property in json.Properties())
             {
                 if (property.Name != "intent" &&
                     property.Name != "dialogue" &&
                     property.Name != "action")
                 {
-                    errorMessage =
-                        "LLM cevabýnda beklenmeyen alan var: " +
-                        property.Name;
+                    errorMessage ="LLM cevabýnda beklenmeyen alan var: " +property.Name;
 
                     return false;
                 }
             }
 
-            // 4. Zorunlu alanlarý ve veri tiplerini kontrol et.
+            // Zorunlu alanlarý ve veri tiplerini kontrol et
             if (!TryReadString(
                 json,
                 "intent",
@@ -108,28 +95,21 @@ public class LLMResponseParser
                 return false;
             }
 
-            // 5. Geçerli niyet deðerlerini kontrol et.
-            if (intent != "EvacuationRequest" &&
-                intent != "ThreatOrSabotage" &&
-                intent != "OtherOrUnclear")
+            // Geçerli niyet deðerlerini kontrol et
+            if (intent != "EvacuationRequest" &&intent != "ThreatOrSabotage" &&intent != "OtherOrUnclear")
             {
-                errorMessage =
-                    "LLM geçersiz veya belirsiz intent üretti.";
+                errorMessage ="LLM geçersiz veya belirsiz intent üretti.";
                 return false;
             }
 
-            // 6. Geçerli action deðerlerini kontrol et.
-            if (action != "OPEN_EXIT" &&
-                action != "REQUEST_MORE_INFO" &&
-                action != "DENY")
+            // Geçerli action deðerlerini kontrol et
+            if (action != "OPEN_EXIT" &&action != "REQUEST_MORE_INFO" &&action != "DENY")
             {
-                errorMessage =
-                    "LLM geçersiz action üretti.";
+                errorMessage ="LLM geçersiz action üretti.";
                 return false;
             }
 
-            // 7. Teknik action isimleri
-            // doðal konuþmanýn içinde bulunmamalý.
+            // Teknik action isimleri doðal konuþmanýn içinde bulunmamalý.
             if (dialogue.IndexOf(
                     "OPEN_EXIT",
                     StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -145,7 +125,7 @@ public class LLMResponseParser
                 return false;
             }
 
-            // 8. Doðrulanmýþ yanýt nesnesini oluþtur.
+            // Doðrulanmýþ yanýt nesnesini oluþtur
             parsedResponse = new LLMResponse
             {
                 intent = intent,
@@ -158,13 +138,10 @@ public class LLMResponseParser
         catch (Exception exception)
         {
             Debug.LogWarning(
-                "LLM JSON ayrýþtýrma hatasý: " +
-                exception.GetType().Name
+                "LLM JSON ayrýþtýrma hatasý: " + exception.GetType().Name
             );
 
-            errorMessage =
-                "Model geçersiz JSON döndürdü.";
-
+            errorMessage ="Model geçersiz JSON döndürdü.";
             parsedResponse = null;
             return false;
         }
@@ -184,18 +161,14 @@ public class LLMResponseParser
 
         if (token == null)
         {
-            errorMessage =
-                "LLM cevabýnda " + fieldName +
-                " alaný eksik.";
+            errorMessage ="LLM cevabýnda " + fieldName +" alaný eksik.";
 
             return false;
         }
 
         if (token.Type != JTokenType.String)
         {
-            errorMessage =
-                "LLM cevabýnda " + fieldName +
-                " alanýnýn tipi string deðil.";
+            errorMessage ="LLM cevabýnda " + fieldName +" alanýnýn tipi string deðil.";
 
             return false;
         }
@@ -204,9 +177,7 @@ public class LLMResponseParser
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            errorMessage =
-                "LLM cevabýnda " + fieldName +
-                " alaný boþ.";
+            errorMessage ="LLM cevabýnda " + fieldName +" alaný boþ.";
 
             return false;
         }

@@ -13,67 +13,96 @@ public class DialogueUIController : MonoBehaviour
     [Header("UI References")]
     [SerializeField] private TMP_InputField messageInput;
     [SerializeField] private TMP_Text responseText;
-
     [SerializeField] private GameObject dialoguePanel;
 
-    private readonly PromptBuilder promptBuilder = new PromptBuilder();
-    private readonly LLMResponseValidator responseValidator =new LLMResponseValidator();
+    // Diyalog iþ mantýðý ayrý sýnýfta yönetilir.
+    private DialogueService dialogueService;
 
-    private const int MaxRetries = 1;
-    private bool isWaitingForResponse;
+    // Mevcut dýþ eriþim korunuyor.
+    // Gerçek kapý bu deðeri doðrudan kullanmamalý.
+    public string LastValidatedAction =>
+        dialogueService?.LastValidatedAction;
 
-    // Fiziksel kapýyý tek baþýna açmaz 
-    public string LastValidatedAction { get; private set; }
+    // Unity Inspector referanslarýný kullanarak
+    // diyalog servisini gerektiðinde oluþturur.
+    private bool TryInitializeService()
+    {
+        if (dialogueService != null)
+            return true;
+
+        if (gameState == null ||
+            ollamaClient == null ||
+            npcProfile == null)
+        {
+            return false;
+        }
+
+        dialogueService = new DialogueService(
+            ollamaClient,
+            gameState,
+            npcProfile
+        );
+
+        return true;
+    }
 
     [ContextMenu("TEST - Open Dialogue")]
     public void OpenDialogue()
     {
         if (dialoguePanel == null)
         {
-            Debug.LogWarning("DialoguePanel referansý eksik.");
+            Debug.LogWarning(
+                "DialoguePanel referansý eksik."
+            );
             return;
         }
 
-        LastValidatedAction = null;
+        // Önceki konuþmanýn izni ve iþlemi temizlenir.
+        StopAllCoroutines();
+        dialogueService?.Cancel();
+
         dialoguePanel.SetActive(true);
     }
 
     [ContextMenu("TEST - Close Dialogue")]
     public void CloseDialogue()
     {
-        // Devam eden diyalog iþlemini durdurur
         StopAllCoroutines();
-
-        isWaitingForResponse = false;
-        LastValidatedAction = null;
+        dialogueService?.Cancel();
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
     }
 
-
+    // SendButton OnClick baðlantýsý korunuyor.
     public void OnSendClicked()
     {
-        if (isWaitingForResponse)
-            return;
-
-        LastValidatedAction = null;
-
-        if (messageInput == null || responseText == null)
+        // Ayný anda ikinci mesaj gönderilmesini önle.
+        if (dialogueService != null &&
+            dialogueService.IsWaitingForResponse)
         {
-            Debug.LogError("Diyalog UI referanslarý eksik.");
             return;
         }
 
-        if (gameState == null ||
-            ollamaClient == null ||
-            npcProfile == null)
+        // Yeni mesaj eski çýkýþ iznini geçersiz kýlar.
+        dialogueService?.Cancel();
+
+        if (messageInput == null || responseText == null)
+        {
+            Debug.LogError(
+                "Diyalog UI referanslarý eksik."
+            );
+            return;
+        }
+
+        if (!TryInitializeService())
         {
             responseText.text = "LLM baðlantýlarý eksik.";
             return;
         }
 
-        string userMessage = messageInput.text.Trim();
+        string userMessage =
+            messageInput.text?.Trim();
 
         if (string.IsNullOrWhiteSpace(userMessage))
         {
@@ -81,134 +110,61 @@ public class DialogueUIController : MonoBehaviour
             return;
         }
 
-        isWaitingForResponse = true;
+        if (!dialogueService.TryBeginDialogue())
+            return;
 
-        StartCoroutine(ProcessDialogue(
-            userMessage,
-            gameState.HasKeycard,
-            gameState.PowerRestored,
-            gameState.StateVersion
-        ));
-    }
-
-    private IEnumerator ProcessDialogue(
-        string userMessage,
-        bool hasKeycard,
-        bool powerRestored,
-        int stateVersion)
-    {
-        string lastFeedback = null;
-
-        for (int attempt = 0; attempt <= MaxRetries; attempt++)
-        {
-            if (!IsGameStateCurrent(
-                hasKeycard, powerRestored, stateVersion))
-            {
-                ShowError("Oyun durumu deðiþti. Tekrar deneyin.");
-                yield break;
-            }
-
-            responseText.text = attempt == 0
-                ? "Murat düþünüyor..."
-                : "Murat yeniden deðerlendiriyor...";
-
-            string systemPrompt;
-
-            if (attempt == 0)
-            {
-                systemPrompt = promptBuilder.BuildSystemPrompt(
-                    npcProfile,
-                    hasKeycard,
-                    powerRestored
-                );
-            }
-            else
-            {
-                systemPrompt = promptBuilder.BuildReviewPrompt(npcProfile, hasKeycard,powerRestored,lastFeedback);
-            }
-
-            string rawResponse = null;
-            string requestError = null;
-
-            // Ollama yanýtýný bekle.
-            yield return ollamaClient.SendChatRequest(
-     systemPrompt,
-     userMessage,
-     hasKeycard && powerRestored,
-     result => rawResponse = result,
-     error => requestError = error
- );
-
-            // Yanýt gelene kadar oyun deðiþmiþ olabilir.
-            if (!IsGameStateCurrent(
-                hasKeycard, powerRestored, stateVersion))
-            {
-                ShowError("Oyun durumu deðiþti. Tekrar deneyin.");
-                yield break;
-            }
-
-            if (!string.IsNullOrEmpty(requestError))
-            {
-                ShowError(requestError);
-                yield break;
-            }
-
-            // JSON, intent, action ve GameState kontrolü.
-            bool valid = responseValidator.TryValidate(
-                rawResponse,
-                gameState,
-                out LLMResponse response,
-                out lastFeedback
-            );
-
-            if (valid)
-            {
-                LastValidatedAction = response.action;
-                responseText.text = response.dialogue;
-
-                Debug.Log(
-                    "LLM INTENT: " + response.intent +
-                    " | ACTION: " + response.action
-                );
-
-                isWaitingForResponse = false;
-                yield break;
-            }
-
-            Debug.LogWarning(
-                "LLM yanýtý doðrulanamadý: " + lastFeedback
-            );
-        }
-
-        ShowError(
-            "Murat'ýn yanýtý doðrulanamadý. Tekrar deneyin."
+        // Diyalog iþ mantýðý serviste çalýþýr.
+        // UI yalnýzca gelen sonucu gösterir.
+        StartCoroutine(
+            dialogueService.ProcessDialogue(
+                userMessage,
+                ShowProgress,
+                ShowResponse,
+                ShowError
+            )
         );
     }
 
-    private bool IsGameStateCurrent(
-        bool hasKeycard,
-        bool powerRestored,
-        int stateVersion)
+    // Kullanýcýya bekleme durumunu gösterir.
+    private void ShowProgress(string message)
     {
-        return gameState != null &&
-               gameState.HasKeycard == hasKeycard &&
-               gameState.PowerRestored == powerRestored &&
-               gameState.StateVersion == stateVersion;
-    }
-
-    private void ShowError(string message)
-    {
-        LastValidatedAction = null;
-        isWaitingForResponse = false;
-
         if (responseText != null)
             responseText.text = message;
+    }
+
+    // Doðrulanmýþ model cevabýný gösterir.
+    private void ShowResponse(LLMResponse response)
+    {
+        if (response == null)
+            return;
+
+        if (responseText != null)
+            responseText.text = response.dialogue;
+
+        Debug.Log(
+            "LLM INTENT: " + response.intent +
+            " | ACTION: " + response.action
+        );
+    }
+
+    // Baðlantý veya doðrulama hatasýný gösterir.
+    private void ShowError(string message)
+    {
+        if (responseText != null)
+            responseText.text = message;
+    }
+
+    // Elif'in final kapýsý entegrasyonunda
+    // kullanýlacak güvenli izin metodu.
+    public bool TryConsumeExitPermission()
+    {
+        return dialogueService != null &&
+               dialogueService.TryConsumeExitPermission();
     }
 
     private void OnDisable()
     {
         StopAllCoroutines();
-        isWaitingForResponse = false;
-        LastValidatedAction = null;
+        dialogueService?.Cancel();
     }
 }

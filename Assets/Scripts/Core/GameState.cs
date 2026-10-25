@@ -15,7 +15,6 @@ public class GameState : MonoBehaviour
 
     public void SetHasKeycard(bool value)
     {
-        // Deðer aynýysa deðiþiklik yok.
         if (hasKeycard == value)
             return;
 
@@ -25,7 +24,6 @@ public class GameState : MonoBehaviour
 
     public void SetPowerRestored(bool value)
     {
-        // Deðer aynýysa deðiþiklik yok.
         if (powerRestored == value)
             return;
 

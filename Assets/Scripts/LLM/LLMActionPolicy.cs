@@ -1,6 +1,4 @@
 
-using System;
-
 public enum PlayerIntent
 {
     Unknown,
@@ -9,10 +7,10 @@ public enum PlayerIntent
     OtherOrUnclear
 }
 
-public class LLMActionExecutor
+public class LLMActionPolicy
 {
     public bool CanApplyAction(
-        string llmAction,
+        LLMAction action,
         PlayerIntent playerIntent,
         GameState gameState,
         out string validationFeedback)
@@ -25,41 +23,44 @@ public class LLMActionExecutor
             return false;
         }
 
-        if (string.IsNullOrWhiteSpace(llmAction))
+        if (action == LLMAction.Unknown)
         {
-            validationFeedback = "Action boþ geldi.";
+            validationFeedback = "Geçersiz action.";
             return false;
         }
 
-        string expectedAction;
+        LLMAction expectedAction;
 
         switch (playerIntent)
         {
             case PlayerIntent.ThreatOrSabotage:
-                expectedAction = "DENY";
+                expectedAction = LLMAction.Deny;
                 break;
 
             case PlayerIntent.OtherOrUnclear:
-                expectedAction = "REQUEST_MORE_INFO";
+                expectedAction = LLMAction.RequestMoreInfo;
                 break;
 
             case PlayerIntent.EvacuationRequest:
                 expectedAction =
-                    gameState.HasKeycard && gameState.PowerRestored
-                        ? "OPEN_EXIT"
-                        : "DENY";
+                    gameState.HasKeycard &&
+                    gameState.PowerRestored
+                        ? LLMAction.OpenExit
+                        : LLMAction.Deny;
                 break;
 
             default:
-                validationFeedback = "Geçersiz oyuncu niyeti.";
+                validationFeedback =
+                    "Geçersiz oyuncu niyeti.";
                 return false;
         }
 
-        if (llmAction.Trim() != expectedAction)
+        if (action != expectedAction)
         {
             validationFeedback =
                 "Modelin kararý oyun kurallarýyla uyuþmuyor. " +
-                "Beklenen action: " + expectedAction;
+                "Beklenen action: " +
+                LLMActionJson.ToJsonValue(expectedAction);
 
             return false;
         }

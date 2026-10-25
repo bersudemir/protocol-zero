@@ -4,24 +4,26 @@ using System;
 public class LLMResponseValidator
 {
     private readonly LLMResponseParser responseParser;
-    private readonly LLMActionExecutor actionExecutor;
+    private readonly LLMActionPolicy actionPolicy;
 
     public LLMResponseValidator()
         : this(
             new LLMResponseParser(),
-            new LLMActionExecutor())
+            new LLMActionPolicy())
     {
     }
 
     public LLMResponseValidator(
         LLMResponseParser responseParser,
-        LLMActionExecutor actionExecutor)
+        LLMActionPolicy actionPolicy)
     {
         this.responseParser = responseParser
-            ?? throw new ArgumentNullException(nameof(responseParser));
+            ?? throw new ArgumentNullException(
+                nameof(responseParser));
 
-        this.actionExecutor = actionExecutor
-            ?? throw new ArgumentNullException(nameof(actionExecutor));
+        this.actionPolicy = actionPolicy
+            ?? throw new ArgumentNullException(
+                nameof(actionPolicy));
     }
 
     public bool TryValidate(
@@ -39,7 +41,7 @@ public class LLMResponseValidator
             return false;
         }
 
-        // 1. JSON kontrolü
+        // 1. Gelen JSON'u ayrýþtýr.
         if (!responseParser.TryParse(
             rawContent,
             out LLMResponse parsedResponse,
@@ -51,7 +53,7 @@ public class LLMResponseValidator
             return false;
         }
 
-        // 2. Intent kontrolü
+        // 2. Oyuncunun niyetini kontrol et.
         if (!Enum.TryParse(
             parsedResponse.intent,
             false,
@@ -63,9 +65,18 @@ public class LLMResponseValidator
             return false;
         }
 
-        // 3. Action ve gerçek oyun durumu kontrolü
-        if (!actionExecutor.CanApplyAction(
+        // 3. JSON action deðerini enum'a dönüþtür.
+        if (!LLMActionJson.TryParse(
             parsedResponse.action,
+            out LLMAction action))
+        {
+            errorMessage = "Geçersiz action.";
+            return false;
+        }
+
+        // 4. Eylemi gerçek GameState ile doðrula.
+        if (!actionPolicy.CanApplyAction(
+            action,
             playerIntent,
             gameState,
             out string feedback))
