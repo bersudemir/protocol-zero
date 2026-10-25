@@ -21,6 +21,7 @@ public class CompanionController : MonoBehaviour
     private float failedSince = -1f;
 
     private System.Action onInteractionCompleted;
+    private System.Action onReturnedToPlayer;
     private void Awake()
     {
         navigator = GetComponent<CompanionNavigator>();
@@ -201,6 +202,9 @@ public class CompanionController : MonoBehaviour
             navigator.Stop();
             Debug.Log("Companion oyuncuya geri döndü");
             stateMachine.ChangeState(CompanionState.Waiting);
+            System.Action returnedAction = onReturnedToPlayer;
+            onReturnedToPlayer = null;
+            returnedAction?.Invoke();
             return;
         }
         navigator.MoveTo(player);
@@ -213,6 +217,7 @@ public class CompanionController : MonoBehaviour
             failedSince = Time.time;
             currentTarget = null;
             onInteractionCompleted = null;
+            onReturnedToPlayer = null;
             navigator.Stop();
             return;
         }
@@ -228,7 +233,7 @@ public class CompanionController : MonoBehaviour
         Debug.Log("Companion: Başarısız görevden toparlandı.");
         stateMachine.ChangeState(CompanionState.Following);
     }
-    public void GoToTarget(Transform target, System.Action onCompleted = null)
+    public void GoToTarget(Transform target, System.Action onCompleted = null, System.Action onReturned = null)
     {
         if (target == null)
         {
@@ -245,6 +250,7 @@ public class CompanionController : MonoBehaviour
             return;
         }
         onInteractionCompleted = onCompleted;
+        onReturnedToPlayer = onReturned;
         currentTarget = target;
         noPathSince = -1f;
         lastProgressDistance = float.PositiveInfinity;

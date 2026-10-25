@@ -60,6 +60,22 @@ public class PlayerInteraction : MonoBehaviour
         if (interactionPrompt == null)
             return;
         bool shouldShow = currentInteractable != null;
+
+        if (shouldShow)
+        {
+            if(currentInteractable is ControlPanel)
+            {
+                interactionPrompt.text = "[E] Companion'a kapıyı açtır.";
+            }
+            else if (currentInteractable is KeycardRequestPanel)
+            {
+                interactionPrompt.text = "[E] Companion'dan erişim kartını getirmesini iste.";
+            }
+            else
+            {
+                interactionPrompt.text = "[E] Etkileşim kur.";
+            }
+        }
         if(interactionPrompt.gameObject.activeSelf != shouldShow)
         {
             interactionPrompt.gameObject.SetActive(shouldShow);
