@@ -71,6 +71,10 @@ public class PlayerInteraction : MonoBehaviour
             {
                 interactionPrompt.text = "[E] Companion'dan erişim kartını getirmesini iste.";
             }
+            else if (currentInteractable is PowerPanelTask)
+            {
+                interactionPrompt.text = "[E] Companion'a elektriği yeniden açtır.";
+            }
             else
             {
                 interactionPrompt.text = "[E] Etkileşim kur.";
