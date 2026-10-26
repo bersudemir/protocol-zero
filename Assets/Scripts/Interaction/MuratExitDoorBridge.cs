@@ -7,6 +7,9 @@ public class MuratExitDoorBridge : MonoBehaviour
     [SerializeField] private DialogueUIController dialogueUI;
     [SerializeField] private DoorController finalExitDoor;
 
+    // Final kapi gercekten acildi mi?
+    public bool ExitOpened { get; private set; }
+
     public bool TryOpenExit()
     {
         if (dialogueUI == null || finalExitDoor == null)
@@ -26,6 +29,8 @@ public class MuratExitDoorBridge : MonoBehaviour
         }
 
         finalExitDoor.OpenDoor();
+
+        ExitOpened = true;
 
         Debug.Log(
             "MuratExitDoorBridge: Cikis izni kullanildi."
