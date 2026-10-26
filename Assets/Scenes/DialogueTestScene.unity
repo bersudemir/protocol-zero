@@ -563,6 +563,52 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1115562797
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1115562799}
+  - component: {fileID: 1115562798}
+  m_Layer: 0
+  m_Name: MuratDoorLink
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1115562798
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115562797}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1ea5b5299f029ea4aaee515510930f8e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::MuratExitDoorBridge
+  dialogueUI: {fileID: 405832823}
+  finalExitDoor: {fileID: 7611358678358310334}
+--- !u!4 &1115562799
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1115562797}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 4.11507, y: 1.55938, z: -0.59139}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1331864284
 GameObject:
   m_ObjectHideFlags: 0
@@ -801,6 +847,10 @@ PrefabInstance:
       propertyPath: ollamaClient
       value: 
       objectReference: {fileID: 2128166566}
+    - target: {fileID: 3138741470911881737, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
+      propertyPath: muratDoorLink
+      value: 
+      objectReference: {fileID: 1115562798}
     - target: {fileID: 5068325927910452261, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
@@ -919,6 +969,74 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
+--- !u!1001 &7611358678358310333
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 6
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1168219296174821676, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1447358205115760425, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+      propertyPath: m_Name
+      value: FinalExitDoor
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+--- !u!114 &7611358678358310334 stripped
+MonoBehaviour:
+  m_CorrespondingSourceObject: {fileID: 907275515216571978, guid: b12ef210958d0824f9a3d69809b58213, type: 3}
+  m_PrefabInstance: {fileID: 7611358678358310333}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 357e7b29cfcad4c44bec641517a85c03, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::DoorController
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
@@ -930,3 +1048,5 @@ SceneRoots:
   - {fileID: 2128166567}
   - {fileID: 480531879}
   - {fileID: 2120551328078420586}
+  - {fileID: 7611358678358310333}
+  - {fileID: 1115562799}

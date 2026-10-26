@@ -15,16 +15,14 @@ public class DialogueUIController : MonoBehaviour
     [SerializeField] private TMP_Text responseText;
     [SerializeField] private GameObject dialoguePanel;
 
-    // Diyalog iþ mantýðý ayrý sýnýfta yönetilir.
+    [Header("Door Connection")]
+    [SerializeField] private MuratExitDoorBridge muratDoorLink;
+
     private DialogueService dialogueService;
 
-    // Mevcut dýþ eriþim korunuyor.
-    // Gerçek kapý bu deðeri doðrudan kullanmamalý.
     public string LastValidatedAction =>
         dialogueService?.LastValidatedAction;
 
-    // Unity Inspector referanslarýný kullanarak
-    // diyalog servisini gerektiðinde oluþturur.
     private bool TryInitializeService()
     {
         if (dialogueService != null)
@@ -52,12 +50,11 @@ public class DialogueUIController : MonoBehaviour
         if (dialoguePanel == null)
         {
             Debug.LogWarning(
-                "DialoguePanel referansý eksik."
+                "DialoguePanel referansi eksik."
             );
             return;
         }
 
-        // Önceki konuþmanýn izni ve iþlemi temizlenir.
         StopAllCoroutines();
         dialogueService?.Cancel();
 
@@ -74,23 +71,20 @@ public class DialogueUIController : MonoBehaviour
             dialoguePanel.SetActive(false);
     }
 
-    // SendButton OnClick baðlantýsý korunuyor.
     public void OnSendClicked()
     {
-        // Ayný anda ikinci mesaj gönderilmesini önle.
         if (dialogueService != null &&
             dialogueService.IsWaitingForResponse)
         {
             return;
         }
 
-        // Yeni mesaj eski çýkýþ iznini geçersiz kýlar.
         dialogueService?.Cancel();
 
         if (messageInput == null || responseText == null)
         {
             Debug.LogError(
-                "Diyalog UI referanslarý eksik."
+                "Diyalog UI referanslari eksik."
             );
             return;
         }
@@ -113,8 +107,6 @@ public class DialogueUIController : MonoBehaviour
         if (!dialogueService.TryBeginDialogue())
             return;
 
-        // Diyalog iþ mantýðý serviste çalýþýr.
-        // UI yalnýzca gelen sonucu gösterir.
         StartCoroutine(
             dialogueService.ProcessDialogue(
                 userMessage,
@@ -125,14 +117,12 @@ public class DialogueUIController : MonoBehaviour
         );
     }
 
-    // Kullanýcýya bekleme durumunu gösterir.
     private void ShowProgress(string message)
     {
         if (responseText != null)
             responseText.text = message;
     }
 
-    // Doðrulanmýþ model cevabýný gösterir.
     private void ShowResponse(LLMResponse response)
     {
         if (response == null)
@@ -145,17 +135,30 @@ public class DialogueUIController : MonoBehaviour
             "LLM INTENT: " + response.intent +
             " | ACTION: " + response.action
         );
+
+        // Yalnizca dogrulanmis OPEN_EXIT
+        // kararinda kapi baglantisini cagir.
+        if (response.action == "OPEN_EXIT")
+        {
+            if (muratDoorLink != null)
+            {
+                muratDoorLink.TryOpenExit();
+            }
+            else
+            {
+                Debug.LogWarning(
+                    "MuratDoorLink referansi eksik."
+                );
+            }
+        }
     }
 
-    // Baðlantý veya doðrulama hatasýný gösterir.
     private void ShowError(string message)
     {
         if (responseText != null)
             responseText.text = message;
     }
 
-    // Elif'in final kapýsý entegrasyonunda
-    // kullanýlacak güvenli izin metodu.
     public bool TryConsumeExitPermission()
     {
         return dialogueService != null &&
