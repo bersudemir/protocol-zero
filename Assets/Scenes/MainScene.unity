@@ -3063,6 +3063,7 @@ GameObject:
   - component: {fileID: 1982066622}
   - component: {fileID: 1982066627}
   - component: {fileID: 1982066628}
+  - component: {fileID: 1982066629}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -3219,6 +3220,21 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::PlayerInteraction
   interactionRadius: 2
   interactionPrompt: {fileID: 600919560}
+--- !u!114 &1982066629
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1982066621}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: cc22dfddef7f0e044a79a1e950ed978f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::PlayerStartSpawner
+  spawnA: {fileID: 1605021239}
+  spawnB: {fileID: 2018395729}
+  spawnC: {fileID: 1062580187}
 --- !u!1 &2018395728
 GameObject:
   m_ObjectHideFlags: 0
