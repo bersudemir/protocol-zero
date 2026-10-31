@@ -1,8 +1,9 @@
 using Unity.VisualScripting;
 using UnityEngine;
 
-public class ControlPanel : MonoBehaviour, IInteractable
+public class ControlPanel : MonoBehaviour, IInteractable,IInteractionPromptProvider
 {
+    public string InteractionPrompt => "[E] Companion'a kapıyı açtır.";
     [SerializeField] private CompanionController companion;
     [SerializeField] private Transform companionTarget;
     [SerializeField] private DoorController door;

@@ -11,6 +11,10 @@ public class KeycardTask : MonoBehaviour
     private bool taskStarted = false;
     private bool isCarrying = false;
     private bool isDelivered = false;
+    private Transform originalCardParent;
+    private Vector3 originalCardPosition;
+    private Quaternion originalCardRotation;
+    private bool originalCardColliderEnabled;
     public bool CanStartTask => !taskStarted && !isDelivered;
     [ContextMenu("TEST - Keycard görevini başlat.")]
     public void BeginTask()
@@ -25,7 +29,7 @@ public class KeycardTask : MonoBehaviour
             Debug.LogWarning("Keycard görevi zaten başlatılmış veya tamamlanmış.");
             return;
         }
-        if (companion==null||keycard==null||holdPoint==null)
+        if (companion==null||keycard==null||holdPoint==null||gameState==null)
         {
             Debug.LogWarning("KeycardTask: Inspector bağlantıları eksik.");
             return;
@@ -38,6 +42,13 @@ public class KeycardTask : MonoBehaviour
             Debug.LogWarning("Companion şu anda Keycard görevini alamıyor.");
             return;
         }
+
+        originalCardParent = keycard.transform.parent;
+        originalCardPosition = keycard.transform.position;
+        originalCardRotation = keycard.transform.rotation;
+        Collider originalCollider = keycard.GetComponent<Collider>();
+        originalCardColliderEnabled = originalCollider != null && originalCollider.enabled;
+
         taskStarted = true;
         companion.GoToTarget(keycard.transform, TakeKeycard, DeliverKeycard);
         Debug.Log("Keycard görevi Companion'a verildi.");
@@ -58,7 +69,7 @@ public class KeycardTask : MonoBehaviour
         keycard.transform.localPosition = Vector3.zero;
         keycard.transform.localRotation = Quaternion.identity;
         isCarrying = true;
-        Debug.Log("Companion Keyacard'ı aldı ve taşımaya başladı.");
+        Debug.Log("Companion Keycard'ı aldı ve taşımaya başladı.");
     }
     private void DeliverKeycard()
     {
@@ -87,14 +98,26 @@ public class KeycardTask : MonoBehaviour
     }
     private void Update()
     {
-        if (!taskStarted || isCarrying || stateMachine == null)
+        if (!taskStarted || stateMachine == null)
         {
             return;
         }
-        if (stateMachine.CurrentState == CompanionState.Failed)
+        if (stateMachine.CurrentState != CompanionState.Failed)
         {
-            taskStarted = false;
-            Debug.LogWarning("Keycard görevi başarısız oldu. Tekrar denenebilir.");
+            return;
         }
+        if (isCarrying && keycard != null)
+        {
+            keycard.transform.SetParent(originalCardParent, true);
+            keycard.transform.SetPositionAndRotation(originalCardPosition, originalCardRotation);
+            Collider cardCollider = keycard.GetComponent<Collider>();
+            if (cardCollider != null)
+            {
+                cardCollider.enabled = originalCardColliderEnabled;
+            }
+        }
+        isCarrying = false;
+        taskStarted = false;
+        Debug.LogWarning("Keycard görevi başarısız oldu.Kart sıfırlandı,görev tekrar denenebilir.");
     }
 }

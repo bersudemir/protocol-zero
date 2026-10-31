@@ -1,7 +1,8 @@
 using UnityEngine;
 [RequireComponent(typeof(Collider))]
-public class PowerPanelTask : MonoBehaviour,IInteractable
+public class PowerPanelTask : MonoBehaviour,IInteractable,IInteractionPromptProvider
 {
+    public string InteractionPrompt => "[E] Companion'a elektriği yeniden açtır.";
     [Header("PowerPanel Görevi")]
     [SerializeField] private CompanionController companion;
     [SerializeField] private Transform companionTarget;
