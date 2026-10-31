@@ -2063,6 +2063,7 @@ MonoBehaviour:
   companion: {fileID: 3007385967570408986}
   keycard: {fileID: 2053177900}
   holdPoint: {fileID: 1916471967}
+  gameState: {fileID: 466907585}
 --- !u!1 &128459078
 GameObject:
   m_ObjectHideFlags: 0
@@ -6199,6 +6200,52 @@ Transform:
   - {fileID: 939479074}
   - {fileID: 671686082}
   m_Father: {fileID: 1914838902}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &466907584
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 466907586}
+  - component: {fileID: 466907585}
+  m_Layer: 0
+  m_Name: GameState
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &466907585
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466907584}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dda526f6bb3c1dc4dab5daba4d88a73b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::GameState
+  hasKeycard: 0
+  powerRestored: 0
+--- !u!4 &466907586
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 466907584}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.0002, y: 1.9953, z: -0.06842}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &495538072
 GameObject:
@@ -24928,6 +24975,7 @@ MonoBehaviour:
   companion: {fileID: 3007385967570408986}
   companionTarget: {fileID: 663141887}
   panelRenderer: {fileID: 1926780391}
+  gameState: {fileID: 466907585}
   poweredColor: {r: 0, g: 1, b: 0, a: 1}
 --- !u!1 &1944665957
 GameObject:
@@ -28093,3 +28141,4 @@ SceneRoots:
   - {fileID: 1229105134}
   - {fileID: 1112568686}
   - {fileID: 139541847}
+  - {fileID: 466907586}

@@ -6,6 +6,7 @@ public class KeycardTask : MonoBehaviour
     [SerializeField] private CompanionController companion;
     [SerializeField] private GameObject keycard;
     [SerializeField] private Transform holdPoint;
+    [SerializeField] private GameState gameState;
     private CompanionStateMachine stateMachine;
     private bool taskStarted = false;
     private bool isCarrying = false;
@@ -74,6 +75,14 @@ public class KeycardTask : MonoBehaviour
         isCarrying = false;
         taskStarted = false;
         keycard.SetActive(false);
+        if (gameState != null)
+        {
+            gameState.SetHasKeycard(true);
+        }
+        else
+        {
+            Debug.LogError("KeycardTask:GameState atanmamış!");
+        }
         Debug.Log("Companion Keyacard'ı Player'a teslim etti.");
     }
     private void Update()

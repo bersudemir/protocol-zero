@@ -6,6 +6,7 @@ public class PowerPanelTask : MonoBehaviour,IInteractable
     [SerializeField] private CompanionController companion;
     [SerializeField] private Transform companionTarget;
     [SerializeField] private Renderer panelRenderer;
+    [SerializeField] private GameState gameState;
 
     [Header("Güç Açık Rengi")]
     [SerializeField] private Color poweredColor = Color.green;
@@ -56,6 +57,14 @@ public class PowerPanelTask : MonoBehaviour,IInteractable
         }
         isPowerRestored = true;
         taskStarted = false;
+        if (gameState != null)
+        {
+            gameState.SetPowerRestored(true);
+        }
+        else
+        {
+            Debug.LogError("PowerPanelTask:GameState bağlantısı eksik!");
+        }
         panelCollider.enabled = true;
         enabled = false;
         if (panelRenderer != null)
