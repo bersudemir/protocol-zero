@@ -25,3 +25,8 @@
 .DS_Store
 Thumbs.db
 *.slnx
+# Asuna kaynak arsivleri - GitHub'a gonderilmeyecek
+/Assets/FreeTestCharacterAsuna/**/*.zip
+/Assets/FreeTestCharacterAsuna/**/*.zip.meta
+/Assets/FreeTestCharacterAsuna/*.unitypackage
+/Assets/FreeTestCharacterAsuna/*.unitypackage.meta

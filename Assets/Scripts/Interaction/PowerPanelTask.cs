@@ -56,6 +56,8 @@ public class PowerPanelTask : MonoBehaviour,IInteractable
         }
         isPowerRestored = true;
         taskStarted = false;
+        panelCollider.enabled = true;
+        enabled = false;
         if (panelRenderer != null)
         {
             panelRenderer.material.color = poweredColor;
