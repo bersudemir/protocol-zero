@@ -2,7 +2,7 @@
 using System.Collections;
 using TMPro;
 using UnityEngine;
-
+using UnityEngine.InputSystem;
 public class DialogueUIController : MonoBehaviour
 {
     [Header("Game References")]
@@ -70,6 +70,30 @@ public class DialogueUIController : MonoBehaviour
 
         if (dialoguePanel != null)
             dialoguePanel.SetActive(false);
+    }
+
+    private void Update()
+    {
+        if (Keyboard.current == null ||
+            dialoguePanel == null ||
+            !dialoguePanel.activeInHierarchy)
+            return;
+
+        // ESC: Diyaloðu kapat.
+        if (Keyboard.current.escapeKey.wasPressedThisFrame)
+        {
+            CloseDialogue();
+            return;
+        }
+
+        // ENTER: Mesajý gönder.
+        if (messageInput != null &&
+            !string.IsNullOrWhiteSpace(messageInput.text) &&
+            (Keyboard.current.enterKey.wasPressedThisFrame ||
+             Keyboard.current.numpadEnterKey.wasPressedThisFrame))
+        {
+            OnSendClicked();
+        }
     }
 
     public void OnSendClicked()

@@ -6,6 +6,7 @@ public class PlayerInteraction : MonoBehaviour
 {
     [SerializeField] private float interactionRadius = 2f;
     [SerializeField] private TextMeshProUGUI interactionPrompt;
+    [SerializeField] private GameObject dialoguePanel;
     private IInteractable currentInteractable;
     private void Awake()
     {
@@ -14,19 +15,29 @@ public class PlayerInteraction : MonoBehaviour
             interactionPrompt.gameObject.SetActive(false);
         }
     }
+
     private void Update()
     {
+        // Diyalog açıksa etkileşimleri durdur.
+        if (dialoguePanel != null &&
+            dialoguePanel.activeInHierarchy)
+        {
+            currentInteractable = null;
+            UpdateInteractionPrompt();
+            return;
+        }
+
         currentInteractable = FindClosestInteractable();
         UpdateInteractionPrompt();
 
-        if(Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+        if (Keyboard.current != null &&
+            Keyboard.current.eKey.wasPressedThisFrame &&
+            currentInteractable != null)
         {
-            if(currentInteractable != null)
-            {
-                currentInteractable.Interact();
-            }
+            currentInteractable.Interact();
         }
     }
+
 
     private IInteractable FindClosestInteractable()
     {
