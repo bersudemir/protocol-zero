@@ -12,6 +12,9 @@ public class MuratExitDoorBridge : MonoBehaviour
 
     public bool TryOpenExit()
     {
+        if (ExitOpened)
+            return false;
+
         if (dialogueUI == null || finalExitDoor == null)
         {
             Debug.LogWarning(
@@ -31,6 +34,15 @@ public class MuratExitDoorBridge : MonoBehaviour
         finalExitDoor.OpenDoor();
 
         ExitOpened = true;
+
+        MuratDialogueInteraction interaction =GetComponent<MuratDialogueInteraction>();
+        if (interaction != null)
+        {
+            interaction.enabled = false;
+        }
+
+        dialogueUI.CloseDialogue();
+
 
         Debug.Log(
             "MuratExitDoorBridge: Cikis izni kullanildi."

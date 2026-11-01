@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 public class PlayerController : MonoBehaviour
 {
     [SerializeField] private float moveSpeed = 5f;
+    [SerializeField] private GameObject dialoguePanel;
     private Rigidbody rb;
     private Vector2 moveInput;
     public Vector2 MoveInput => moveInput;
@@ -23,6 +24,12 @@ public class PlayerController : MonoBehaviour
     }
     private void ReadMovementInput()
     {
+        if (dialoguePanel != null && dialoguePanel.activeInHierarchy)
+        {
+            moveInput = Vector2.zero;
+            return;
+        }
+
         if (Keyboard.current == null)
         {
             moveInput = Vector2.zero;
