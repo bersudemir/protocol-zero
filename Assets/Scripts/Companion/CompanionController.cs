@@ -28,6 +28,25 @@ public class CompanionController : MonoBehaviour
         sensor = GetComponent<CompanionSensor>();
         stateMachine = GetComponent<CompanionStateMachine>();
     }
+
+    private void Start()
+    {
+        if (player == null)
+            return;
+
+        Collider playerCollider = player.GetComponent<Collider>();
+        Collider companionCollider = GetComponent<Collider>();
+
+        if (playerCollider != null && companionCollider != null)
+        {
+            Physics.IgnoreCollision(
+                playerCollider,
+                companionCollider,
+                true
+            );
+        }
+    }
+
     private void Update()
     {
         if (player == null)
