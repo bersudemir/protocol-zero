@@ -20,6 +20,7 @@ public class DialogueUIController : MonoBehaviour
 
     private DialogueService dialogueService;
 
+    private float requestStartTime;
     public string LastValidatedAction =>
         dialogueService?.LastValidatedAction;
 
@@ -106,7 +107,7 @@ public class DialogueUIController : MonoBehaviour
 
         if (!dialogueService.TryBeginDialogue())
             return;
-
+        requestStartTime = Time.realtimeSinceStartup;
         StartCoroutine(
             dialogueService.ProcessDialogue(
                 userMessage,
@@ -127,6 +128,10 @@ public class DialogueUIController : MonoBehaviour
     {
         if (response == null)
             return;
+        //yanýt süresi hesaplama
+        float elapsed = Time.realtimeSinceStartup - requestStartTime;
+
+        Debug.Log($"LLM YANIT SURESI: {elapsed:F2} saniye");
 
         if (responseText != null)
             responseText.text = response.dialogue;

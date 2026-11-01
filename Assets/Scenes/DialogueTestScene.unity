@@ -296,7 +296,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dda526f6bb3c1dc4dab5daba4d88a73b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::GameState
-  hasKeycard: 1
+  hasKeycard: 0
   powerRestored: 1
 --- !u!4 &480531879
 Transform:
@@ -730,7 +730,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::OllamaClient
   endpoint: http://localhost:11434/api/chat
   model: gemma3:4b
-  timeoutSeconds: 60
+  timeoutSeconds: 61
 --- !u!4 &2128166567
 Transform:
   m_ObjectHideFlags: 0
@@ -900,6 +900,10 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 511265762}
     m_Modifications:
+    - target: {fileID: 2638605317958074816, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
+      propertyPath: m_Horizontal
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3138741470911881737, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: gameState
       value: 
@@ -919,6 +923,10 @@ PrefabInstance:
     - target: {fileID: 5068325927910452261, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnSendClicked
+      objectReference: {fileID: 0}
+    - target: {fileID: 5807900624873901664, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 110
       objectReference: {fileID: 0}
     - target: {fileID: 5940496570410215160, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: gameState
@@ -966,7 +974,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6451318608280466807, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: m_SizeDelta.y
-      value: 190
+      value: 250
       objectReference: {fileID: 0}
     - target: {fileID: 6451318608280466807, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: m_LocalPosition.x
@@ -1015,6 +1023,10 @@ PrefabInstance:
     - target: {fileID: 6451318608280466807, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8304560496626382507, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
+      propertyPath: m_SizeDelta.y
+      value: 100
       objectReference: {fileID: 0}
     - target: {fileID: 9162131459629934267, guid: f8c7c635a048d714e9952cc8d6899c23, type: 3}
       propertyPath: m_Name
