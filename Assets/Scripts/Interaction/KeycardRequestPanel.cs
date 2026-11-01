@@ -1,7 +1,8 @@
 using UnityEngine;
 
-public class KeycardRequestPanel : MonoBehaviour, IInteractable
+public class KeycardRequestPanel : MonoBehaviour, IInteractable,IInteractionPromptProvider
 {
+    public string InteractionPrompt => "[E] Companion'dan erişim kartını getirmesini iste.";
     [SerializeField] private KeycardTask keycardTask;
     public void Interact()
     {

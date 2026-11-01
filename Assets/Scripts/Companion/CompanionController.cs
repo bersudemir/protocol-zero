@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using UnityEngine.XR;
 [RequireComponent(typeof(CompanionNavigator))]
 [RequireComponent(typeof(CompanionStateMachine))]
 public class CompanionController : MonoBehaviour
@@ -13,6 +12,7 @@ public class CompanionController : MonoBehaviour
     [SerializeField] private float targetTimeoutSeconds = 30f;
     private float targetStartTime;
     private CompanionNavigator navigator;
+    private CompanionSensor sensor;
     private CompanionStateMachine stateMachine;
     private Transform currentTarget;
     private float noPathSince = -1f;
@@ -25,6 +25,7 @@ public class CompanionController : MonoBehaviour
     private void Awake()
     {
         navigator = GetComponent<CompanionNavigator>();
+        sensor = GetComponent<CompanionSensor>();
         stateMachine = GetComponent<CompanionStateMachine>();
     }
     private void Update()
@@ -85,27 +86,17 @@ public class CompanionController : MonoBehaviour
     {
         if (currentTarget == null)
         {
-            navigator.Stop();
-            stateMachine.ChangeState(CompanionState.Failed);
+            FailTask("Companion: Görev hedefi bulunamadı.");
             return;
         }
         if(Time.time - targetStartTime >= targetTimeoutSeconds)
         {
-            Debug.LogWarning("Companion: Hedefe ulaşma süresi aşıldı.");
-            navigator.Stop();
-            currentTarget = null;
-            onInteractionCompleted = null;
-            stateMachine.ChangeState(CompanionState.Failed);
+            FailTask("Companion: Hedefe ulaşma süresi aşıldı.");
             return;
         }
         if(!navigator.TryMoveTo(currentTarget,out string navigationError))
         {
-            Debug.LogWarning(
-                "Companion navigasyon hatası: " + navigationError);
-            navigator.Stop();
-            currentTarget = null;
-            onInteractionCompleted = null;
-            stateMachine.ChangeState(CompanionState.Failed);
+            FailTask("Companion navigasyon hatası: " + navigationError);
             return;
         }
 
@@ -113,11 +104,7 @@ public class CompanionController : MonoBehaviour
             navigator.HasPath&&
             navigator.PathStatus != UnityEngine.AI.NavMeshPathStatus.PathComplete)
         {
-            Debug.LogWarning("Companion geçersiz veya eksik rota: " + navigator.PathStatus);
-            navigator.Stop();
-            currentTarget = null;
-            onInteractionCompleted = null;
-            stateMachine.ChangeState(CompanionState.Failed);
+            FailTask("Companion geçersiz veya eksik rota: " + navigator.PathStatus);
             return;
         }
 
@@ -129,12 +116,7 @@ public class CompanionController : MonoBehaviour
             }
             else if (Time.time - noPathSince >= 2f)
             {
-                Debug.LogWarning("Companion: Hedefe giden NavMesh yolu bulunamadı.");
-                navigator.Stop();
-                currentTarget = null;
-                onInteractionCompleted = null;
-                noPathSince = -1f;
-                stateMachine.ChangeState(CompanionState.Failed);
+                FailTask("Companion: Hedefe giden yolda NavMesh yolu bulunamadı.");
                 return;
             }
         }
@@ -163,11 +145,12 @@ public class CompanionController : MonoBehaviour
             Time.time-lastProgressTime>=6f&&
             Vector3.Distance(transform.position, currentTarget.position) > targetArrivalDistance)
         {
-            Debug.LogWarning("Companion takıldı: 6 saniyedir ilerleme yok.");
-            navigator.Stop();
-            currentTarget = null;
-            onInteractionCompleted = null;
-            stateMachine.ChangeState(CompanionState.Failed);
+            string sensorStatus=sensor==null
+                ?"Sensör bulunamadı."
+                :$"Ön: {sensor.ForwardBlocked}, " +
+                $"Sol: {sensor.LeftBlocked}, " +
+                $"Sağ: {sensor.RightBlocked}";
+            FailTask($"Companion takıldı: 6 saniyedir ilerleme yok. {sensorStatus}");
             return;
         }
 
@@ -191,6 +174,7 @@ public class CompanionController : MonoBehaviour
         System.Action completedAction = onInteractionCompleted;
         onInteractionCompleted = null;
         currentTarget = null;
+        targetStartTime = Time.time;
         stateMachine.ChangeState(CompanionState.Returning);
         completedAction?.Invoke();
     }
@@ -207,9 +191,28 @@ public class CompanionController : MonoBehaviour
             returnedAction?.Invoke();
             return;
         }
-        navigator.MoveTo(player);
+        if (Time.time - targetStartTime >= targetTimeoutSeconds)
+        {
+            FailTask("Companion: oyuncuya dönüş süresi aşıldı.");
+            return;
+        }
+        if(!navigator.TryMoveTo(player,out string navigationError))
+        {
+            FailTask("Companion geri dönemedi." + navigationError);
+            return;
+        }
     }
 
+    private void FailTask(string reason)
+    {
+        Debug.LogWarning(reason);
+        navigator.Stop();
+        currentTarget = null;
+        onInteractionCompleted = null;
+        onReturnedToPlayer = null;
+        noPathSince = -1f;
+        stateMachine.ChangeState(CompanionState.Failed);
+    }
     private void HandleFailed()
     {
         if (failedSince < 0f)
@@ -237,8 +240,7 @@ public class CompanionController : MonoBehaviour
     {
         if (target == null)
         {
-            navigator.Stop();
-            stateMachine.ChangeState(CompanionState.Failed);
+            FailTask("Companion: Gidilecek görev hedefi atanmadı.");
             return;
         }
 

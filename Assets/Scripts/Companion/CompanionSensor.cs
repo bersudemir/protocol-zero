@@ -26,8 +26,8 @@ public class CompanionSensor : MonoBehaviour
     {
         Vector3 origin = companionCollider.bounds.center;
         Vector3 forwardDirection = transform.forward;
-        Vector3 leftDirection = Quaternion.Euler(0f, sideAngle, 0f) * forwardDirection;
-        Vector3 rightDirection = Quaternion.Euler(0f, -sideAngle, 0f) * forwardDirection;
+        Vector3 leftDirection = Quaternion.Euler(0f, -sideAngle, 0f) * forwardDirection;
+        Vector3 rightDirection = Quaternion.Euler(0f, sideAngle, 0f) * forwardDirection;
         ForwardBlocked = CastSensor(origin, forwardDirection);
         LeftBlocked = CastSensor(origin, leftDirection);
         RightBlocked = CastSensor(origin, rightDirection);

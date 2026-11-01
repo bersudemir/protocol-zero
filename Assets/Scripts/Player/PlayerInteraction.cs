@@ -1,7 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 using TMPro;
-using Unity.VisualScripting;
 
 public class PlayerInteraction : MonoBehaviour
 {
@@ -63,17 +62,9 @@ public class PlayerInteraction : MonoBehaviour
 
         if (shouldShow)
         {
-            if(currentInteractable is ControlPanel)
+            if(currentInteractable is IInteractionPromptProvider promptProvider)
             {
-                interactionPrompt.text = "[E] Companion'a kapıyı açtır.";
-            }
-            else if (currentInteractable is KeycardRequestPanel)
-            {
-                interactionPrompt.text = "[E] Companion'dan erişim kartını getirmesini iste.";
-            }
-            else if (currentInteractable is PowerPanelTask)
-            {
-                interactionPrompt.text = "[E] Companion'a elektriği yeniden açtır.";
+                interactionPrompt.text = promptProvider.InteractionPrompt;
             }
             else
             {

@@ -27,7 +27,7 @@ public class DoorController : MonoBehaviour
         Vector3 startPosition = transform.position;
         Vector3 endPosition = startPosition + Vector3.right * slideDistance;
         float elapsedTime = 0f;
-        Debug.Log("FirstGate yana kayılarak açılıyor.");
+        Debug.Log($"{gameObject.name} yana kayılarak açılıyor.");
         while (elapsedTime < slideDuration)
         {
             elapsedTime += Time.deltaTime;
