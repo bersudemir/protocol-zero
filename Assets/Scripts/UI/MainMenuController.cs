@@ -33,7 +33,7 @@ public class MainMenuController : MonoBehaviour
     // göreve baþla butonu
     public void StartGame()
     {
-        SceneManager.LoadScene("MainScene");
+        SceneManager.LoadScene("MainScene_CompactTest");
     }
 
     // çýkýþ butonu
