@@ -158,18 +158,27 @@ public class CompanionController : MonoBehaviour
             }
         }
 
+        bool obstacleNearby = sensor != null &&
+            (
+                (sensor.ForwardBlocked && sensor.ForwardDistance<1.5f) ||
+                (sensor.LeftBlocked && sensor.LeftDistance < 1f) ||
+                (sensor.RightBlocked && sensor.RightDistance < 1f)
+            );
+        float stuckTimeout = obstacleNearby ? 9f : 6f;
+
         if(!navigator.IsPathPending &&
             navigator.HasPath &&
             navigator.PathStatus == UnityEngine.AI.NavMeshPathStatus.PathComplete&&
-            Time.time-lastProgressTime>=6f&&
+            Time.time-lastProgressTime>=stuckTimeout&&
             Vector3.Distance(transform.position, currentTarget.position) > targetArrivalDistance)
         {
-            string sensorStatus=sensor==null
+            string sensorStatus = sensor == null
                 ?"Sensör bulunamadı."
-                :$"Ön: {sensor.ForwardBlocked}, " +
-                $"Sol: {sensor.LeftBlocked}, " +
-                $"Sağ: {sensor.RightBlocked}";
-            FailTask($"Companion takıldı: 6 saniyedir ilerleme yok. {sensorStatus}");
+                :$"Konum:{sensor.AgentPosition}, " +
+                $"Ön: {sensor.ForwardDistance:F2} m / {sensor.ForwardAngle:F0} derece, " +
+                $"Sol: {sensor.LeftDistance:F2}, m / {sensor.LeftAngle:F0} derece, " +
+                $"Sağ: {sensor.RightDistance:F2} m / {sensor.RightAngle:F0} derece, ";
+            FailTask($"Companion takıldı: {stuckTimeout} ilerleme yok." + sensorStatus);
             return;
         }
 
