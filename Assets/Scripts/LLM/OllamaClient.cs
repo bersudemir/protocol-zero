@@ -1,4 +1,4 @@
-
+ï»¿
 using System;
 using System.Collections;
 using System.Text;
@@ -30,12 +30,12 @@ public class OllamaClient : MonoBehaviour, ILLMClient
             string.IsNullOrWhiteSpace(userMessage))
         {
             onError?.Invoke(
-                "LLM isteði için gerekli bilgi eksik."
+                "LLM isteÄŸi iÃ§in gerekli bilgi eksik."
             );
             yield break;
         }
 
-        // Ýstek hazýrlama iþi ayrý sýnýfta.
+        // Ä°stek hazÄ±rlama iÅŸi ayrÄ± sÄ±nÄ±fta.
         string json = requestBuilder.BuildRequestJson(
             model,
             systemPrompt,
@@ -43,7 +43,7 @@ public class OllamaClient : MonoBehaviour, ILLMClient
             canOpenExit
         );
 
-        // Að iletiþimini bu sýnýf yönetir.
+        // AÄŸ iletiÅŸimini bu sÄ±nÄ±f yÃ¶netir.
         yield return SendJsonRequest(
             json,
             onSuccess,
@@ -78,7 +78,7 @@ public class OllamaClient : MonoBehaviour, ILLMClient
 
             yield return request.SendWebRequest();
 
-            // Baðlantý veya HTTP hatasý
+            // BaÄŸlantÄ± veya HTTP hatasÄ±
             if (request.result !=
                 UnityWebRequest.Result.Success)
             {
@@ -91,20 +91,20 @@ public class OllamaClient : MonoBehaviour, ILLMClient
                 if (request.responseCode == 404)
                 {
                     onError?.Invoke(
-                        "Ollama modeli veya API adresi bulunamadý."
+                        "Ollama modeli veya API adresi bulunamadÄ±."
                     );
                 }
                 else if (request.result ==
                          UnityWebRequest.Result.ConnectionError)
                 {
                     onError?.Invoke(
-                        "Ollama sunucusuna baðlanýlamadý veya zaman aþýmý oluþtu."
+                        "Ollama sunucusuna baÄŸlanÄ±lamadÄ± veya zaman aÅŸÄ±mÄ± oluÅŸtu."
                     );
                 }
                 else
                 {
                     onError?.Invoke(
-                        "Ollama isteði baþarýsýz oldu. HTTP: " +
+                        "Ollama isteÄŸi baÅŸarÄ±sÄ±z oldu. HTTP: " +
                         request.responseCode
                     );
                 }
@@ -112,7 +112,7 @@ public class OllamaClient : MonoBehaviour, ILLMClient
                 yield break;
             }
 
-            // Sunucunun JSON yanýtýný oku.
+            // Sunucunun JSON yanÄ±tÄ±nÄ± oku.
             OllamaChatResponse response;
 
             try
@@ -125,12 +125,12 @@ public class OllamaClient : MonoBehaviour, ILLMClient
             catch (Exception exception)
             {
                 Debug.LogError(
-                    "Ollama response parse hatasý: " +
+                    "Ollama response parse hatasÄ±: " +
                     exception.Message
                 );
 
                 onError?.Invoke(
-                    "Ollama geçersiz bir sunucu yanýtý döndürdü."
+                    "Ollama geÃ§ersiz bir sunucu yanÄ±tÄ± dÃ¶ndÃ¼rdÃ¼."
                 );
 
                 yield break;
@@ -142,7 +142,7 @@ public class OllamaClient : MonoBehaviour, ILLMClient
                     response.message.content))
             {
                 onError?.Invoke(
-                    "Modelden geçerli cevap alýnamadý."
+                    "Modelden geÃ§erli cevap alÄ±namadÄ±."
                 );
 
                 yield break;

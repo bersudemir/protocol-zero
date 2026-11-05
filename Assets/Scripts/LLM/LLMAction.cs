@@ -1,4 +1,4 @@
-
+ï»¿
 public enum LLMAction
 {
     Unknown = 0,
@@ -7,8 +7,8 @@ public enum LLMAction
     RequestMoreInfo = 3
 }
 
-// Ollama JSON değerleri ile C# enum değerleri
-// arasında güvenli dönüşüm sağlar.
+// Ollama JSON deÄŸerleri ile C# enum deÄŸerleri
+// arasÄ±nda gÃ¼venli dÃ¶nÃ¼ÅŸÃ¼m saÄŸlar.
 public static class LLMActionJson
 {
     public static bool TryParse(

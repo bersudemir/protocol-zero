@@ -1,4 +1,4 @@
-
+ï»¿
 using System;
 
 // Ollama mesaj veri modeli
@@ -74,7 +74,7 @@ public class OllamaOptions
     public float temperature = 0f;
 }
 
-// Ollama HTTP isteðinin veri modeli
+// Ollama HTTP isteÄŸinin veri modeli
 [Serializable]
 public class OllamaChatRequest
 {
@@ -85,7 +85,7 @@ public class OllamaChatRequest
     public OllamaOptions options;
 }
 
-// Ollama sunucusunun yanýt veri modeli
+// Ollama sunucusunun yanÄ±t veri modeli
 [Serializable]
 public class OllamaChatResponse
 {

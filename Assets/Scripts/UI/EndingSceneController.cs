@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -10,7 +10,7 @@ public class EndingSceneController : MonoBehaviour
         SceneManager.LoadScene("MainMenuScene");
     }
 
-    //cýkýs butonu
+    //cÄ±kÄ±s butonu
     public void QuitGame()
     {
 #if UNITY_EDITOR

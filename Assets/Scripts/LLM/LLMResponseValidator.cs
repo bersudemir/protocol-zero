@@ -1,4 +1,4 @@
-
+ï»¿
 using System;
 
 public class LLMResponseValidator
@@ -37,18 +37,18 @@ public class LLMResponseValidator
 
         if (gameState == null)
         {
-            errorMessage = "GameState bulunamadý.";
+            errorMessage = "GameState bulunamadÄ±.";
             return false;
         }
 
-        // 1. Gelen JSON'u ayrýþtýr.
+        // 1. Gelen JSON'u ayrÄ±ÅŸtÄ±r.
         if (!responseParser.TryParse(
             rawContent,
             out LLMResponse parsedResponse,
             out errorMessage) || parsedResponse == null)
         {
             if (string.IsNullOrWhiteSpace(errorMessage))
-                errorMessage = "LLM yanýtý ayrýþtýrýlamadý.";
+                errorMessage = "LLM yanÄ±tÄ± ayrÄ±ÅŸtÄ±rÄ±lamadÄ±.";
 
             return false;
         }
@@ -61,20 +61,20 @@ public class LLMResponseValidator
             playerIntent == PlayerIntent.Unknown ||
             !Enum.IsDefined(typeof(PlayerIntent), playerIntent))
         {
-            errorMessage = "Geçersiz oyuncu niyeti.";
+            errorMessage = "GeÃ§ersiz oyuncu niyeti.";
             return false;
         }
 
-        // 3. JSON action deðerini enum'a dönüþtür.
+        // 3. JSON action deÄŸerini enum'a dÃ¶nÃ¼ÅŸtÃ¼r.
         if (!LLMActionJson.TryParse(
             parsedResponse.action,
             out LLMAction action))
         {
-            errorMessage = "Geçersiz action.";
+            errorMessage = "GeÃ§ersiz action.";
             return false;
         }
 
-        // 4. Eylemi gerçek GameState ile doðrula.
+        // 4. Eylemi gerÃ§ek GameState ile doÄŸrula.
         if (!actionPolicy.CanApplyAction(
             action,
             playerIntent,
@@ -82,7 +82,7 @@ public class LLMResponseValidator
             out string feedback))
         {
             errorMessage = string.IsNullOrWhiteSpace(feedback)
-                ? "LLM kararý doðrulanamadý."
+                ? "LLM kararÄ± doÄŸrulanamadÄ±."
                 : feedback;
 
             return false;

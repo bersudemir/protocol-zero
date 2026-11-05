@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
-[CreateAssetMenu( //profil asset oluþturmak için bir menü öðesi ekler
+[CreateAssetMenu( //profil asset oluÅŸturmak iÃ§in bir menÃ¼ Ã¶ÄŸesi ekler
     fileName = "NewNPCProfile",
     menuName = "Protocol Zero/NPC Profile"
 )]
@@ -17,7 +17,7 @@ public class NPCProfile : ScriptableObject
 
     [SerializeField] private string[] allowedActions;
 
-    //kapsülleme-encapsulation -> public propertyler ile private fieldlere eriþim saðlanýr
+    //kapsÃ¼lleme-encapsulation -> public propertyler ile private fieldlere eriÅŸim saÄŸlanÄ±r
     public string NpcName => npcName;
     public string Personality => personality;
     public string Objective => objective;

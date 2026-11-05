@@ -1,4 +1,4 @@
-
+ï»¿
 using System;
 using System.IO;
 using Newtonsoft.Json;
@@ -17,7 +17,7 @@ public class LLMResponseParser
 
         if (string.IsNullOrWhiteSpace(rawContent))
         {
-            errorMessage = "Model boş cevap döndürdü.";
+            errorMessage = "Model boÅŸ cevap dÃ¶ndÃ¼rdÃ¼.";
             return false;
         }
 
@@ -26,48 +26,48 @@ public class LLMResponseParser
             JObject json;
             JsonLoadSettings settings = new JsonLoadSettings
             {
-                //aynı alan adı olursa hata yolluyor
+                //aynÄ± alan adÄ± olursa hata yolluyor
                 DuplicatePropertyNameHandling =DuplicatePropertyNameHandling.Error
             };
 
-            //ollamadan gelen cevabı JSON olarak ayrıştır
+            //ollamadan gelen cevabÄ± JSON olarak ayrÄ±ÅŸtÄ±r
             using (StringReader stringReader = new StringReader(rawContent))
             using (JsonTextReader jsonReader = new JsonTextReader(stringReader))
             {
-                jsonReader.DateParseHandling =DateParseHandling.None;//tarihleri otomatik olarak ayrıştırma
+                jsonReader.DateParseHandling =DateParseHandling.None;//tarihleri otomatik olarak ayrÄ±ÅŸtÄ±rma
 
                 JToken root = JToken.ReadFrom(jsonReader,settings);
             
                 if (!(root is JObject))
                 {
-                    errorMessage ="LLM cevabı JSON nesnesi değil.";
+                    errorMessage ="LLM cevabÄ± JSON nesnesi deÄŸil.";
                     return false;
                 }
 
-                // JSON nesnesinden sonra ek içerik olamaz
+                // JSON nesnesinden sonra ek iÃ§erik olamaz
                 if (jsonReader.Read())
                 {
-                    errorMessage ="JSON cevabında fazladan içerik var.";
+                    errorMessage ="JSON cevabÄ±nda fazladan iÃ§erik var.";
                     return false;
                 }
 
                 json = (JObject)root;
             }
 
-            // Yalnızca üç alana izin verir
+            // YalnÄ±zca Ã¼Ã§ alana izin verir
             foreach (JProperty property in json.Properties())
             {
                 if (property.Name != "intent" &&
                     property.Name != "dialogue" &&
                     property.Name != "action")
                 {
-                    errorMessage ="LLM cevabında beklenmeyen alan var: " +property.Name;
+                    errorMessage ="LLM cevabÄ±nda beklenmeyen alan var: " +property.Name;
 
                     return false;
                 }
             }
 
-            // Zorunlu alanları ve veri tiplerini kontrol et
+            // Zorunlu alanlarÄ± ve veri tiplerini kontrol et
             if (!TryReadString(
                 json,
                 "intent",
@@ -95,21 +95,21 @@ public class LLMResponseParser
                 return false;
             }
 
-            // Geçerli niyet değerlerini kontrol et
+            // GeÃ§erli niyet deÄŸerlerini kontrol et
             if (intent != "EvacuationRequest" &&intent != "ThreatOrSabotage" &&intent != "OtherOrUnclear")
             {
-                errorMessage ="LLM geçersiz veya belirsiz intent üretti.";
+                errorMessage ="LLM geÃ§ersiz veya belirsiz intent Ã¼retti.";
                 return false;
             }
 
-            // Geçerli action değerlerini kontrol et
+            // GeÃ§erli action deÄŸerlerini kontrol et
             if (action != "OPEN_EXIT" &&action != "REQUEST_MORE_INFO" &&action != "DENY")
             {
-                errorMessage ="LLM geçersiz action üretti.";
+                errorMessage ="LLM geÃ§ersiz action Ã¼retti.";
                 return false;
             }
 
-            // Teknik action isimleri doğal konuşmanın içinde bulunmamalı.
+            // Teknik action isimleri doÄŸal konuÅŸmanÄ±n iÃ§inde bulunmamalÄ±.
             if (dialogue.IndexOf(
                     "OPEN_EXIT",
                     StringComparison.OrdinalIgnoreCase) >= 0 ||
@@ -121,11 +121,11 @@ public class LLMResponseParser
                     StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 errorMessage =
-                    "LLM konuşmasında teknik action ismi bulundu.";
+                    "LLM konuÅŸmasÄ±nda teknik action ismi bulundu.";
                 return false;
             }
 
-            // Doğrulanmış yanıt nesnesini oluştur
+            // DoÄŸrulanmÄ±ÅŸ yanÄ±t nesnesini oluÅŸtur
             parsedResponse = new LLMResponse
             {
                 intent = intent,
@@ -138,16 +138,16 @@ public class LLMResponseParser
         catch (Exception exception)
         {
             Debug.LogWarning(
-                "LLM JSON ayrıştırma hatası: " + exception.GetType().Name
+                "LLM JSON ayrÄ±ÅŸtÄ±rma hatasÄ±: " + exception.GetType().Name
             );
 
-            errorMessage ="Model geçersiz JSON döndürdü.";
+            errorMessage ="Model geÃ§ersiz JSON dÃ¶ndÃ¼rdÃ¼.";
             parsedResponse = null;
             return false;
         }
     }
 
-    // Zorunlu JSON alanının string olduğunu kontrol eder.
+    // Zorunlu JSON alanÄ±nÄ±n string olduÄŸunu kontrol eder.
     private bool TryReadString(
         JObject json,
         string fieldName,
@@ -161,14 +161,14 @@ public class LLMResponseParser
 
         if (token == null)
         {
-            errorMessage ="LLM cevabında " + fieldName +" alanı eksik.";
+            errorMessage ="LLM cevabÄ±nda " + fieldName +" alanÄ± eksik.";
 
             return false;
         }
 
         if (token.Type != JTokenType.String)
         {
-            errorMessage ="LLM cevabında " + fieldName +" alanının tipi string değil.";
+            errorMessage ="LLM cevabÄ±nda " + fieldName +" alanÄ±nÄ±n tipi string deÄŸil.";
 
             return false;
         }
@@ -177,7 +177,7 @@ public class LLMResponseParser
 
         if (string.IsNullOrWhiteSpace(value))
         {
-            errorMessage ="LLM cevabında " + fieldName +" alanı boş.";
+            errorMessage ="LLM cevabÄ±nda " + fieldName +" alanÄ± boÅŸ.";
 
             return false;
         }

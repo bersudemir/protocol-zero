@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEngine;
 
 [RequireComponent(typeof(PlayerController))]
@@ -25,7 +25,7 @@ public class PlayerAnimationController : MonoBehaviour
         bool isMoving =
             playerController.MoveInput.sqrMagnitude > 0.01f;
 
-        // Durum değişmediyse animasyonu yeniden başlatma.
+        // Durum deÄŸiÅŸmediyse animasyonu yeniden baÅŸlatma.
         if (previousMoving.HasValue &&
             previousMoving.Value == isMoving)
             return;

@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEditor;
 using UnityEngine;
 
@@ -21,14 +21,14 @@ public static class LLMParserTest
         if (!accepted && response == null)
         {
             Debug.Log(
-                "[TEST BAÞARILI] Geçersiz JSON reddedildi. " +
+                "[TEST BAÅžARILI] GeÃ§ersiz JSON reddedildi. " +
                 error
             );
         }
         else
         {
             Debug.LogError(
-                "[TEST BAÞARISIZ] Geçersiz JSON kabul edildi!"
+                "[TEST BAÅžARISIZ] GeÃ§ersiz JSON kabul edildi!"
             );
         }
     }

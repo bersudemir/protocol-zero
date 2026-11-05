@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEngine;
 
 [RequireComponent(typeof(Collider))]
@@ -8,13 +8,13 @@ public class MuratDialogueInteraction : MonoBehaviour,
     [SerializeField]
     private DialogueUIController dialogueUI;
 
-    public string InteractionPrompt => "[E] Murat ile konuþ";
+    public string InteractionPrompt => "[E] Murat ile konuÅŸ";
 
     public void Interact()
     {
         if (dialogueUI == null)
         {
-            Debug.LogWarning("Murat: Diyalog paneli atanmamýþ.");
+            Debug.LogWarning("Murat: Diyalog paneli atanmamÄ±ÅŸ.");
             return;
         }
 

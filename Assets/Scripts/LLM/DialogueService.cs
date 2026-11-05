@@ -1,4 +1,4 @@
-
+ï»¿
 using System;
 using System.Collections;
 
@@ -40,8 +40,8 @@ public class DialogueService
             ?? throw new ArgumentNullException(nameof(npcProfile));
     }
 
-    // Yeni konuşmayı başlatır.
-    // Aynı anda iki istek gönderilmesini önler.
+    // Yeni konuÅŸmayÄ± baÅŸlatÄ±r.
+    // AynÄ± anda iki istek gÃ¶nderilmesini Ã¶nler.
     public bool TryBeginDialogue()
     {
         if (isWaitingForResponse)
@@ -69,14 +69,14 @@ public class DialogueService
             if (!IsGameStateCurrent(
                 hasKeycard, powerRestored, stateVersion))
             {
-                Fail("Oyun durumu değişti. Tekrar deneyin.", onError);
+                Fail("Oyun durumu deÄŸiÅŸti. Tekrar deneyin.", onError);
                 yield break;
             }
 
             onProgress?.Invoke(
                 attempt == 0
-                    ? "Murat düşünüyor..."
-                    : "Murat yeniden değerlendiriyor..."
+                    ? "Murat dÃ¼ÅŸÃ¼nÃ¼yor..."
+                    : "Murat yeniden deÄŸerlendiriyor..."
             );
 
             string systemPrompt = attempt == 0
@@ -93,8 +93,8 @@ public class DialogueService
             string rawResponse = null;
             string requestError = null;
 
-            // Gerçek LLM isteği.
-            // HTTP ayrıntılarını DialogueService bilmez.
+            // GerÃ§ek LLM isteÄŸi.
+            // HTTP ayrÄ±ntÄ±larÄ±nÄ± DialogueService bilmez.
             yield return llmClient.SendChatRequest(
                 systemPrompt,
                 userMessage,
@@ -103,11 +103,11 @@ public class DialogueService
                 error => requestError = error
             );
 
-            // Yanıt beklenirken oyun durumu değişmiş olabilir.
+            // YanÄ±t beklenirken oyun durumu deÄŸiÅŸmiÅŸ olabilir.
             if (!IsGameStateCurrent(
                 hasKeycard, powerRestored, stateVersion))
             {
-                Fail("Oyun durumu değişti. Tekrar deneyin.", onError);
+                Fail("Oyun durumu deÄŸiÅŸti. Tekrar deneyin.", onError);
                 yield break;
             }
 
@@ -126,13 +126,13 @@ public class DialogueService
 
             if (valid)
             {
-                // Validator'dan geçmiş action'ı
-                // Unity içinde enum olarak saklarız.
+                // Validator'dan geÃ§miÅŸ action'Ä±
+                // Unity iÃ§inde enum olarak saklarÄ±z.
                 if (!LLMActionJson.TryParse(
                     response.action,
                     out LLMAction action))
                 {
-                    Fail("Geçersiz action.", onError);
+                    Fail("GeÃ§ersiz action.", onError);
                     yield break;
                 }
 
@@ -150,12 +150,12 @@ public class DialogueService
         }
 
         Fail(
-            "Murat'ın yanıtı doğrulanamadı. Tekrar deneyin.",
+            "Murat'Ä±n yanÄ±tÄ± doÄŸrulanamadÄ±. Tekrar deneyin.",
             onError
         );
     }
 
-    // Eski veya tekrar kullanılan çıkış izinlerini reddeder.
+    // Eski veya tekrar kullanÄ±lan Ã§Ä±kÄ±ÅŸ izinlerini reddeder.
     public bool TryConsumeExitPermission()
     {
         bool allowed =
@@ -171,7 +171,7 @@ public class DialogueService
         return allowed;
     }
 
-    // Panel kapatıldığında veya istek iptal edildiğinde.
+    // Panel kapatÄ±ldÄ±ÄŸÄ±nda veya istek iptal edildiÄŸinde.
     public void Cancel()
     {
         isWaitingForResponse = false;

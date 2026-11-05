@@ -1,4 +1,4 @@
-
+ï»¿
 using System.Collections;
 using TMPro;
 using UnityEngine;
@@ -79,14 +79,14 @@ public class DialogueUIController : MonoBehaviour
             !dialoguePanel.activeInHierarchy)
             return;
 
-        // ESC: Diyaloðu kapat.
+        // ESC: DiyaloÄŸu kapat.
         if (Keyboard.current.escapeKey.wasPressedThisFrame)
         {
             CloseDialogue();
             return;
         }
 
-        // ENTER: Mesajý gönder.
+        // ENTER: MesajÄ± gÃ¶nder.
         if (messageInput != null &&
             !string.IsNullOrWhiteSpace(messageInput.text) &&
             (Keyboard.current.enterKey.wasPressedThisFrame ||
@@ -116,7 +116,7 @@ public class DialogueUIController : MonoBehaviour
 
         if (!TryInitializeService())
         {
-            responseText.text = "LLM baðlantýlarý eksik.";
+            responseText.text = "LLM baÄŸlantÄ±larÄ± eksik.";
             return;
         }
 
@@ -125,7 +125,7 @@ public class DialogueUIController : MonoBehaviour
 
         if (string.IsNullOrWhiteSpace(userMessage))
         {
-            responseText.text = "Lütfen bir mesaj yaz.";
+            responseText.text = "LÃ¼tfen bir mesaj yaz.";
             return;
         }
 
@@ -152,7 +152,7 @@ public class DialogueUIController : MonoBehaviour
     {
         if (response == null)
             return;
-        //yanýt süresi hesaplama
+        //yanÄ±t sÃ¼resi hesaplama
         float elapsed = Time.realtimeSinceStartup - requestStartTime;
 
         Debug.Log($"LLM YANIT SURESI: {elapsed:F2} saniye");

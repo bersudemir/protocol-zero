@@ -1,4 +1,4 @@
-
+ï»¿
 public enum PlayerIntent
 {
     Unknown,
@@ -19,13 +19,13 @@ public class LLMActionPolicy
 
         if (gameState == null)
         {
-            validationFeedback = "GameState bulunamadý.";
+            validationFeedback = "GameState bulunamadÄ±.";
             return false;
         }
 
         if (action == LLMAction.Unknown)
         {
-            validationFeedback = "Geçersiz action.";
+            validationFeedback = "GeÃ§ersiz action.";
             return false;
         }
 
@@ -51,14 +51,14 @@ public class LLMActionPolicy
 
             default:
                 validationFeedback =
-                    "Geçersiz oyuncu niyeti.";
+                    "GeÃ§ersiz oyuncu niyeti.";
                 return false;
         }
 
         if (action != expectedAction)
         {
             validationFeedback =
-                "Modelin kararý oyun kurallarýyla uyuþmuyor. " +
+                "Modelin kararÄ± oyun kurallarÄ±yla uyuÅŸmuyor. " +
                 "Beklenen action: " +
                 LLMActionJson.ToJsonValue(expectedAction);
 

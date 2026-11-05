@@ -1,4 +1,4 @@
-
+ï»¿
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -30,13 +30,13 @@ public class MainMenuController : MonoBehaviour
         introPanel.SetActive(true);
     }
 
-    // göreve baþla butonu
+    // gÃ¶reve baÅŸla butonu
     public void StartGame()
     {
         SceneManager.LoadScene("MainScene_CompactTest");
     }
 
-    // çýkýþ butonu
+    // Ã§Ä±kÄ±ÅŸ butonu
     public void QuitGame()
     {
 #if UNITY_EDITOR
