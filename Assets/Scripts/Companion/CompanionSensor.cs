@@ -73,7 +73,7 @@ public class CompanionSensor : MonoBehaviour
                 ? $"{LeftDistance:F2} m / {LeftAngle:F0} derece"
                 : "Engel yok";
             string rightInfo = RightBlocked
-                ? $"{ForwardDistance:F2} m / {RightAngle:F0} derece"
+                ? $"{RightDistance:F2} m / {RightAngle:F0} derece"
                 : "Engel yok";
             Debug.Log(
                 $"[COMPANION SENSOR] " +
