@@ -516,17 +516,11 @@ Bu testler, yalnızca modele güvenilmediğini; modelin kararının `GameState` 
 
 #### 5.3.3. Değerlendirme ve JSON doğrulama
 
-- Tehdit içeren mesajlara `DENY`, konu dışı/belirsiz mesajlara `REQUEST_MORE_INFO` verildi.
-- Oyuncunun görevleri atlatmaya yönelik zorlayıcı komutu kapıyı açmadı.
-- Eksik kart veya güç koşullarında tahliye isteği `DENY` ile sonuçlandı; iki koşul sağlandığında `OPEN_EXIT` üretildi.
-- İlk beş diyalog testinde `intent` ve `action` alanları Console kayıtlarına ayrıştırıldı. **Tüm model yanıtları için genel bir JSON geçerlilik oranı ölçülmedi.**
-- `Assets/Editor/LLMParserTest.cs` kullanılarak kasıtlı oluşturulan bozuk JSON'un ayrıştırıcı tarafından reddedildiği `JsonReaderException` ve `[TEST BAŞARILI]` kaydıyla doğrulandı. Bu, modelin kendiliğinden bozuk JSON ürettiği anlamına gelmez.
-- **Yapılandırılmış karar doğruluğu:** Test edilen senaryolarda modelin ürettiği `intent` ve `action` değerleri Unity Console kayıtlarıyla incelenmiştir. Tehdit ve eksik görev koşullarında tahliye izni verilmemiş; erişim kartı ve güç sistemi tamamlandığında uygun tahliye isteği için `OPEN_EXIT` kararı üretilmiştir. Bununla birlikte sınırlı sayıdaki test, modelin tüm olası mesajlarda doğru karar vereceğini garanti etmez.
+Test edilen senaryolarda modelin ürettiği `intent` ve `action` değerleri Unity Console kayıtlarıyla doğrulanmıştır. Tehdit ve eksik görev koşullarında çıkış izni verilmemiş, kart ve güç koşulları tamamlandığında `OPEN_EXIT` kararı uygulanmıştır.
+`LLMParserTest.cs` ile kasıtlı oluşturulan geçersiz JSON'un ayrıştırıcı tarafından reddedildiği doğrulanmıştır. Bu test, modelin kendiliğinden hatalı JSON ürettiği anlamına gelmemektedir.
+**Diyalog kalitesi:** Bazı yanıtlarda bağlam ve dilbilgisi sorunları görülmüştür. Alakasız konuşmada gereksiz tahliye açıklaması, genel bilgi sorusunda yetersiz cevap ve tehdit senaryosunda hatalı Türkçe ifade gözlenmiştir. Bu durum, yapılandırılmış eylem doğrulamasının doğal dil kalitesini garanti etmediğini göstermektedir.
 
-- **Türkçe diyalog kalitesi:** Modelin doğal dil yanıtlarında bazı bağlam ve dilbilgisi sorunları gözlenmiştir. Alakasız konuşma testinde oyuncu Murat'ın sevdiği yemeği sormasına rağmen model, yanıtının devamında gereksiz biçimde tahliye konusuna yönelmiştir. Laboratuvar hakkında genel bilgi istenen testte ise yeterince açıklayıcı bir yanıt verilememiştir. Tehdit senaryosunda da "Anlaşılan bir tehdit savursunuz" biçiminde dilbilgisi açısından hatalı bir ifade üretilmiştir.
-
-- **Değerlendirme sonucu:** JSON yapısının doğrulanması ve güvenli oyun eyleminin seçilmesi ile doğal dil yanıtlarının anlam ve bağlam kalitesi birbirinden farklı ölçütlerdir. Mevcut doğrulama sistemi oyun eylemlerini denetlese de konuşma metninin her zaman doğal ve bağlama uygun olmasını garanti etmez. Bazı uzun yanıtlar ekran görüntülerinde tamamen görünmediğinden yalnızca doğrulanabilen ifadeler aktarılmıştır.
-
+Test edilen örnekler dışında genel bir JSON geçerlilik veya model doğruluk oranı ölçülmemiştir.
 **Diyalog test ekran görüntüleri:**
 
 - [Tehdit / sabotaj — DENY](docs/screenshots/llm-threat-deny.png)
@@ -538,8 +532,7 @@ Bu testler, yalnızca modele güvenilmediğini; modelin kararının `GameState` 
 - [Güç eksikken oyuncunun iddiasının reddedilmesi](docs/screenshots/llm-power-deny.png)
 - [Laboratuvar hakkında genel bilgi isteği](docs/screenshots/llm-general-info.png)
 
-### 5.4. Hata ve oyun akışı testleri
-
+### 5.4. Hata yönetimi testleri
 LLM yanıtlarının ayrıştırılması, Ollama bağlantısı ve oyun durumuna bağlı tahliye koşulları aşağıdaki senaryolarla sınanmıştır.
 
 | Test | Beklenen sonuç | Gözlenen sonuç | Durum |
@@ -574,17 +567,13 @@ Ollama request failed: HTTP/1.1 404 Not Found HTTP: 404
 
 ## 6. Sonuç ve Tartışma
 
-**Başarılar:** NavMesh tabanlı Companion için üç oyuncu başlangıcında toplam **27/27 rota denemesi** (%100; ortalama 1,27 sn) kaydedilmiştir. FirstGate, Keycard ve PowerPanel sırasını kapsayan uçtan uca görev ölçümlerinde **9/9 başarı** (%100; ortalama 27,76 sn) raporlanmıştır. Murat'ın ilk beş diyalog testinde ortalama yanıt süresi **3,82 sn**'dir. Ek GameState doğrulamalarında iki koşul sağlanmadığında `DENY`, sağlandığında `OPEN_EXIT` üretilmiş; final kapısının açılması ve iznin tüketilmesi loglarla belgelenmiştir. Bağlantı kesintisi, zaman aşımı, HTTP 404 ve geçersiz JSON senaryolarının hata yönetimi kontrol edilmiştir.
+**Başarılar:** Projede NavMesh tabanlı otonom Companion ile yerel LLM destekli NPC, tek bir Unity oyununda bütünleştirilmiştir. Companion testlerinde 27/27 rota ve 9/9 uçtan uca görev denemesi başarıyla tamamlanmıştır. gemma3:4b modeliyle dinamik Türkçe diyaloglar üretilmiş, JSON çıktıları Unity tarafında doğrulanarak oyun durumuna uygun kapı açma kararları uygulanmıştır. Bağlantı hatası, zaman aşımı ve geçersiz JSON durumlarında hata yönetimi test edilmiştir.
 
-**Sınırlılıklar:** Projede NavMesh tabanlı navigasyon, kural tabanlı Companion davranışı ve yerel LLM destekli NPC etkileşimi başarıyla bütünleştirilmiş olmakla birlikte bazı teknik ve deneysel sınırlılıklar bulunmaktadır.
-**NavMesh ve Companion testleri:** Toplam 27 rota denemesinin 9'unda Companion başlangıçta hedef mesafe eşiği içinde bulunduğundan 0 saniyelik sonuçlar kaydedilmiştir. Bu denemeler gerçek hareket gerektirmeyen başlangıç koşullarını temsil etmektedir. Dolayısıyla tüm denemelerin ortalaması olan 1,27 saniye, yalnızca hareket gerektiren rotaların ortalama süresi olarak yorumlanmamalıdır. Companion'ın FirstGate, Keycard ve PowerPanel görevlerini kapsayan 9 uçtan uca denemesi raporlanmış olsa da bu denemelerin ayrı ayrı süre kayıtları mevcut ekran görüntülerinde sunulmamıştır.
-**LLM ve Türkçe diyalog kalitesi:** Projede kullanılan `gemma3:4b` modeli, test edilen senaryolarda yapılandırılmış niyet ve eylem kararları üretmiş olsa da bazı doğal dil yanıtlarında bağlam ve dilbilgisi sorunları gözlenmiştir. Alakasız konuşma testinde model, yemek sorusuna verdiği yanıtın devamında gereksiz biçimde tahliye konusuna yönelmiştir. Laboratuvar hakkında bilgi istenen senaryoda ise yeterince açıklayıcı bir cevap üretilememiştir. Tehdit senaryosunda dilbilgisi açısından hatalı bir ifade kullanılmıştır. Bu örnekler, yapılandırılmış `intent` ve `action` değerlerinin doğrulanmasının diyalog metninin anlamsal kalitesini tek başına garanti etmediğini göstermektedir.
-**Model performansı ve test kapsamı:** Yerel dil modelinin yanıt süresi kullanılan donanıma, modelin bellekte bulunma durumuna ve isteğin karmaşıklığına bağlı olarak değişmektedir. Testlerde 1,61 saniye ile 17,36 saniye arasında değişen yanıt süreleri kaydedilmiştir. İncelenen örnekler dışında bütün model üretimlerini kapsayan genel bir JSON geçerlilik oranı veya kapsamlı bir doğruluk ölçümü yapılmamıştır. Bu nedenle modelin tüm kullanıcı ifadelerini doğru sınıflandıracağı garanti edilemez.
-**Diyalog hafızası ve yapay zekâ yaklaşımı:** Mevcut NPC sistemi, önceki konuşmaların tam geçmişini modele aktarmamaktadır. Bu nedenle uzun süreli veya çok turlu konuşmalarda bağlam sürekliliği sınırlıdır. Companion ise pekiştirmeli öğrenme ya da makine öğrenmesiyle eğitilmiş bir hareket politikası yerine **Unity NavMesh ve kural tabanlı sonlu durum makinesi (FSM)** kullanmaktadır. Sensörler, navigasyon ve takılma durumunun izlenmesini desteklerken hareket kararları tanımlanmış kurallar ve oyun durumları üzerinden yürütülmektedir.
-**Genel değerlendirme:** Bu sınırlılıklara rağmen gerçekleştirilen testler, Companion görevlerinin yürütülebildiğini, yerel LLM ile Türkçe iletişim kurulabildiğini ve tahliye kararının yalnızca model çıktısına bırakılmayıp Unity tarafındaki oyun koşullarıyla doğrulandığını göstermektedir.
+**Sınırlılıklar:** NavMesh rota testlerinin 9'unda başlangıçta hedefe yeterince yakın olunduğundan hareket gerekmemiştir. Uçtan uca görev testlerinin ayrı ayrı süre kayıtları ekran görüntülerinde sunulmamıştır. LLM yanıtlarında zaman zaman dilbilgisi hataları, bağlam dışı ifadeler ve yetersiz açıklamalar gözlenmiştir. Ayrıca NPC önceki konuşmaların tam geçmişini tutmamaktadır. Sınırlı test kapsamı nedeniyle modelin genel doğruluk ve JSON geçerlilik oranları belirlenmemiştir. Companion, pekiştirmeli öğrenme yerine NavMesh ve sonlu durum makinesi (FSM) kullanmaktadır.
 
+**Olası geliştirmeler:** Daha fazla başlangıç konumu ve engel üzerinde test yapılması, otomatik test kayıtlarının oluşturulması, çok turlu diyalog hafızası eklenmesi ve model yanıt süresi ile oyun performansının daha kapsamlı ölçülmesi planlanabilir.
 
-**Geliştirme olanakları:** Daha fazla başlangıç konumu ve engel varyasyonu, otomatik test kaydı, çok turlu diyalog geçmişi, FPS ve model gecikmesi ölçümleri, ek görev ve NPC senaryoları.
+**Genel değerlendirme:** Gerçekleştirilen testler, projenin temel senaryo gereksinimlerini karşıladığını ve iki yapay zekâ bileşeninin birlikte çalışabildiğini göstermektedir.
 
 ## 7. Kurulum ve Çalıştırma
 
@@ -592,15 +581,14 @@ Ollama request failed: HTTP/1.1 404 Not Found HTTP: 404
 
 ### 7.1. Projenin kurulumu
 
-Projeyi GitHub'dan indirmek için:
+Projenin güncel ve birleştirilmiş sürümü GitHub deposunun `main` dalında bulunmaktadır.
+
+Projeyi GitHub üzerinden indirmek için:
 
 ```bash
 git clone https://github.com/bersudemir/protocol-zero.git
 cd protocol-zero
-git switch integration-protocol
 ```
-
-`integration-protocol` dalı `main` dalına birleştirildiğinde son komuta gerek kalmayacaktır.
 
 Modeli kurmak ve Ollama'yı kontrol etmek için:
 
@@ -610,8 +598,11 @@ ollama list
 ollama serve
 ```
 
-**Not:** `ollama serve` yalnızca Ollama servisi zaten çalışmıyorsa çalıştırılmalıdır. `OllamaClient`, `http://localhost:11434/api/chat` adresine bağlandığından oyun ve Ollama **aynı bilgisayarda** çalışmalıdır.
+**Not:** `ollama serve` komutu yalnızca Ollama servisi zaten çalışmıyorsa kullanılmalıdır. `OllamaClient`, `http://localhost:11434/api/chat` adresine bağlandığından oyun ve Ollama aynı bilgisayarda çalışmalıdır.
 
+**Hazır Windows sürümü:** [ProtocolZero-Windows-v1.0.zip](https://github.com/bersudemir/protocol-zero/releases/download/v1.0.0/ProtocolZero-Windows-v1.0.zip)
+
+Hazır sürümü çalıştırmak için ZIP dosyasını indirip tamamen çıkarın. `.exe` dosyasını beraberindeki oyun dosyalarıyla aynı klasör yapısında çalıştırın. Hazır Windows sürümü için Unity Editor kurulumu gerekli değildir.
 ### 7.2. Unity Editor üzerinden çalıştırma
 
 1. Unity Hub'da projeyi **Unity 6000.3.25f1** ile açın.
