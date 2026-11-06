@@ -505,5 +505,3 @@ ollama serve
 | Security Guard – Rigged 3D Model — Q.SARDOR | Murat'ın modeli (`Guard.fbx`) | CC BY 4.0 | [Sketchfab](https://sketchfab.com/3d-models/security-guard-rigged-3d-model-1e3307732bbf4453b30f021bfec5bcaf) |
 
 Teknik kaynaklar: [Unity AI Navigation](https://docs.unity3d.com/Packages/com.unity.ai.navigation@2.0/manual/index.html), [Ollama](https://ollama.com/), [Mermaid](https://mermaid.js.org/).
-
-**Teslim:** `README.md`, Unity kaynak dosyaları (`Assets`, `Packages`, `ProjectSettings`) ve çalıştırılabilir Windows build tek ZIP dosyasında sunulur. Build klasörü `.gitignore` kapsamında olduğundan ZIP'e ayrıca eklenmelidir. Ekip üyelerinin katkıları [commit geçmişinde](https://github.com/bersudemir/protocol-zero/commits/integration-protocol) izlenebilir.
