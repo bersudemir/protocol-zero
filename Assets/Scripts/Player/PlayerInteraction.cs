@@ -1,0 +1,95 @@
+using UnityEngine;
+using UnityEngine.InputSystem;
+using TMPro;
+
+public class PlayerInteraction : MonoBehaviour
+{
+    [SerializeField] private float interactionRadius = 2f;
+    [SerializeField] private TextMeshProUGUI interactionPrompt;
+    [SerializeField] private GameObject dialoguePanel;
+    private IInteractable currentInteractable;
+    private void Awake()
+    {
+        if(interactionPrompt != null)
+        {
+            interactionPrompt.gameObject.SetActive(false);
+        }
+    }
+
+    private void Update()
+    {
+        // Diyalog açıksa etkileşimleri durdur.
+        if (dialoguePanel != null &&
+            dialoguePanel.activeInHierarchy)
+        {
+            currentInteractable = null;
+            UpdateInteractionPrompt();
+            return;
+        }
+
+        currentInteractable = FindClosestInteractable();
+        UpdateInteractionPrompt();
+
+        if (Keyboard.current != null &&
+            Keyboard.current.eKey.wasPressedThisFrame &&
+            currentInteractable != null)
+        {
+            currentInteractable.Interact();
+        }
+    }
+
+
+    private IInteractable FindClosestInteractable()
+    {
+        Collider[] nearbyColliders = Physics.OverlapSphere(transform.position, interactionRadius);
+        IInteractable closestInteractable = null;
+        float closestDistance = float.MaxValue;
+
+        foreach(Collider nearbyCollider in nearbyColliders)
+        {
+            MonoBehaviour[] behaviours = nearbyCollider.GetComponentsInParent<MonoBehaviour>();
+            foreach (MonoBehaviour behaviour in behaviours)
+            {
+                if(behaviour is IInteractable interactable && behaviour.isActiveAndEnabled)
+                {
+                    float distance = Vector3.Distance(transform.position, nearbyCollider.ClosestPoint(transform.position));
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestInteractable = interactable;
+                    }
+                    break;
+                }
+            }
+        }
+        return closestInteractable;
+    }
+
+    private void UpdateInteractionPrompt()
+    {
+        if (interactionPrompt == null)
+            return;
+        bool shouldShow = currentInteractable != null;
+
+        if (shouldShow)
+        {
+            if(currentInteractable is IInteractionPromptProvider promptProvider)
+            {
+                interactionPrompt.text = promptProvider.InteractionPrompt;
+            }
+            else
+            {
+                interactionPrompt.text = "[E] Etkileşim kur.";
+            }
+        }
+        if(interactionPrompt.gameObject.activeSelf != shouldShow)
+        {
+            interactionPrompt.gameObject.SetActive(shouldShow);
+        }
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.DrawWireSphere(transform.position, interactionRadius);
+    }
+}
