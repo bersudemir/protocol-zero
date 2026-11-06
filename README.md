@@ -485,8 +485,6 @@ Aşağıdaki cümleler test görüntülerinde görülen Murat cevaplarından al�
 | Görevler eksikken tahliye — GameState testi | "Erişim kartınız ve güç sistemi henüz aktif değildir. Tahliye izni verilemez." |
 | Kart ve güç tamamlandıktan sonra tahliye — GameState testi | "Çıkış izniniz onaylanmıştır." |
 
-Bilgi amaçlı uzun cevapların tamamı bazı ekran görüntülerinde diyalog panelinin kaydırılabilir alanı nedeniyle görünmemektedir. Bu sebeple yalnızca okunabilen bölüm alıntılanmış, eksik metin tamamlanmış gibi aktarılmamıştır.
-
 #### 5.3.2. GameState ile tahliye yetkisi doğrulama
 
 İlk beş diyalog testinden sonra oyun durumuyla kararı aynı görüntüde doğrulayan iki ek test gerçekleştirilmiştir:
@@ -518,6 +516,7 @@ Bu testler, yalnızca modele güvenilmediğini; modelin kararının `GameState` 
 
 Test edilen senaryolarda modelin ürettiği `intent` ve `action` değerleri Unity Console kayıtlarıyla doğrulanmıştır. Tehdit ve eksik görev koşullarında çıkış izni verilmemiş, kart ve güç koşulları tamamlandığında `OPEN_EXIT` kararı uygulanmıştır.
 `LLMParserTest.cs` ile kasıtlı oluşturulan geçersiz JSON'un ayrıştırıcı tarafından reddedildiği doğrulanmıştır. Bu test, modelin kendiliğinden hatalı JSON ürettiği anlamına gelmemektedir.
+
 **Diyalog kalitesi:** Bazı yanıtlarda bağlam ve dilbilgisi sorunları görülmüştür. Alakasız konuşmada gereksiz tahliye açıklaması, genel bilgi sorusunda yetersiz cevap ve tehdit senaryosunda hatalı Türkçe ifade gözlenmiştir. Bu durum, yapılandırılmış eylem doğrulamasının doğal dil kalitesini garanti etmediğini göstermektedir.
 
 Test edilen örnekler dışında genel bir JSON geçerlilik veya model doğruluk oranı ölçülmemiştir.
@@ -569,7 +568,7 @@ Ollama request failed: HTTP/1.1 404 Not Found HTTP: 404
 
 **Başarılar:** Projede NavMesh tabanlı otonom Companion ile yerel LLM destekli NPC, tek bir Unity oyununda bütünleştirilmiştir. Companion testlerinde 27/27 rota ve 9/9 uçtan uca görev denemesi başarıyla tamamlanmıştır. gemma3:4b modeliyle dinamik Türkçe diyaloglar üretilmiş, JSON çıktıları Unity tarafında doğrulanarak oyun durumuna uygun kapı açma kararları uygulanmıştır. Bağlantı hatası, zaman aşımı ve geçersiz JSON durumlarında hata yönetimi test edilmiştir.
 
-**Sınırlılıklar:** NavMesh rota testlerinin 9'unda başlangıçta hedefe yeterince yakın olunduğundan hareket gerekmemiştir. Uçtan uca görev testlerinin ayrı ayrı süre kayıtları ekran görüntülerinde sunulmamıştır. LLM yanıtlarında zaman zaman dilbilgisi hataları, bağlam dışı ifadeler ve yetersiz açıklamalar gözlenmiştir. Ayrıca NPC önceki konuşmaların tam geçmişini tutmamaktadır. Sınırlı test kapsamı nedeniyle modelin genel doğruluk ve JSON geçerlilik oranları belirlenmemiştir. Companion, pekiştirmeli öğrenme yerine NavMesh ve sonlu durum makinesi (FSM) kullanmaktadır.
+**Sınırlılıklar:** NavMesh rota testlerinin 9'unda başlangıçta hedefe yeterince yakın olunduğundan hareket gerekmemiştir. LLM yanıtlarında zaman zaman dilbilgisi hataları, bağlam dışı ifadeler ve yetersiz açıklamalar gözlenmiştir. Companion, pekiştirmeli öğrenme yerine NavMesh ve sonlu durum makinesi (FSM) kullanmaktadır.
 
 **Olası geliştirmeler:** Daha fazla başlangıç konumu ve engel üzerinde test yapılması, otomatik test kayıtlarının oluşturulması, çok turlu diyalog hafızası eklenmesi ve model yanıt süresi ile oyun performansının daha kapsamlı ölçülmesi planlanabilir.
 
@@ -619,8 +618,6 @@ Hazır sürümü çalıştırmak için ZIP dosyasını indirip tamamen çıkarı
 4. **Build** ile çıktı klasörünü seçerek oyunu derleyin.
 5. Oluşan `.exe` dosyasını çalıştırın. Oyunun `.exe`, `_Data` klasörü ve diğer gerekli build dosyaları birlikte tutulmalıdır.
 6. Murat'ın diyaloglarını test etmeden önce Ollama servisinin çalıştığından ve `gemma3:4b` modelinin kurulu olduğundan emin olun.
-
-**Test ayarı uyarısı:** 1 saniyelik timeout değeri yalnızca hata yönetimi testinde kullanılmıştır. Normal çalışma için `OllamaClient` bileşenindeki `Timeout Seconds` değeri **60** olmalıdır.
 
 ### 7.4. Oyun kontrolleri
 
