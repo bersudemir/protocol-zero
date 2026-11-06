@@ -30,3 +30,5 @@ Thumbs.db
 /Assets/FreeTestCharacterAsuna/**/*.zip.meta
 /Assets/FreeTestCharacterAsuna/*.unitypackage
 /Assets/FreeTestCharacterAsuna/*.unitypackage.meta
+
+build-windows/
